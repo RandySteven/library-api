@@ -22,9 +22,18 @@ func (repo *bookRepository) Save(book *models.Book) (*models.Book, error) {
 // Find implements interfaces.BookRepository.
 func (repo *bookRepository) Find(searchBook *models.Book) ([]models.Book, error) {
 	var books []models.Book
-	table := repo.db.Table("books")
+	table := repo.db.Model(&models.Book{}).
+		Preload("Author")
 	if searchBook != nil {
-		table = table.Where(searchBook)
+		if searchBook.Title != "" {
+			table = table.Where("title ilike ?", "%"+searchBook.Title+"%")
+		}
+		if searchBook.Description != "" {
+			table = table.Where("description ilike ?", "%"+searchBook.Description+"%")
+		}
+		if searchBook.Cover != "" {
+			table = table.Where("cover ilike ?", "%"+searchBook.Cover+"%")
+		}
 	}
 	err := table.Find(&books).Error
 	if err != nil {

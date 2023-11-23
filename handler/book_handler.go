@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"strings"
@@ -11,6 +12,7 @@ import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgconn"
 )
 
 type BookHandler struct {
@@ -35,10 +37,13 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 		Description: request.Description,
 		Quantity:    *request.Quantity,
 		Cover:       request.Cover,
+		AuthorID:    request.AuthorID,
 	}
 	book, err := handler.usecase.CreateBook(book)
 	if err != nil {
-		if strings.Contains(err.Error(), "23505") {
+		var psqlErr *pgconn.PgError
+		ok := errors.As(err, &psqlErr)
+		if ok && psqlErr.Code == "23505" {
 			errNoDuplication := apperror.ErrNoDuplication{
 				Resource: "books",
 				Field:    "title",
@@ -56,9 +61,20 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
 		return
 	}
+	bookResponse := &response.BookResponse{
+		ID:          book.ID,
+		Title:       book.Title,
+		Description: book.Description,
+		Cover:       book.Description,
+		Quantity:    book.Quantity,
+		CreatedAt:   &book.CreatedAt,
+		UpdatedAt:   &book.UpdatedAt,
+		DeletedAt:   &book.DeletedAt,
+		Author:      nil,
+	}
 	resp := response.Response{
 		Message: "Success get all books",
-		Data:    book,
+		Data:    bookResponse,
 	}
 	c.JSON(http.StatusCreated, resp)
 }
@@ -86,9 +102,21 @@ func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
 		return
 	}
+	var bookResponses []response.BookResponse
+	for _, book := range books {
+		bookResponse := &response.BookResponse{
+			ID:          book.ID,
+			Title:       book.Title,
+			Description: book.Description,
+			Quantity:    book.Quantity,
+			Cover:       book.Cover,
+			Author:      &book.Author,
+		}
+		bookResponses = append(bookResponses, *bookResponse)
+	}
 	resp := response.Response{
 		Message: "Success get all books",
-		Data:    books,
+		Data:    bookResponses,
 	}
 	c.JSON(http.StatusOK, resp)
 }

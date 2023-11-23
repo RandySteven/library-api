@@ -5,4 +5,5 @@ type BookRequest struct {
 	Description string `json:"description" binding:"required"`
 	Quantity    *uint  `json:"quantity" binding:"required,min=0"`
 	Cover       string `json:"cover"`
+	AuthorID    uint   `json:"author_id" binding:"required"`
 }
