@@ -9,6 +9,10 @@ type ErrNoDuplication struct {
 	Err      error
 }
 
+type ErrNoColumnExists struct {
+	Err error
+}
+
 func NewErrNoDuplication(resource, field, value string) *ErrNoDuplication {
 	return &ErrNoDuplication{
 		Resource: resource,
