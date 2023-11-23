@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"strings"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type BookHandler struct {
@@ -29,6 +29,7 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, resp)
 		return
 	}
+	request.Title = strings.Title(request.Title)
 	book := &models.Book{
 		Title:       request.Title,
 		Description: request.Description,
@@ -37,18 +38,22 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 	}
 	book, err := handler.usecase.CreateBook(book)
 	if err != nil {
-		switch err {
-		case gorm.ErrDuplicatedKey:
-			resp := response.Response{
-				Errors: []string{"Bad Request title can't duplicate"},
+		if strings.Contains(err.Error(), "23505") {
+			errNoDuplication := apperror.ErrNoDuplication{
+				Resource: "books",
+				Field:    "title",
+				Value:    request.Title,
 			}
-			c.AbortWithStatusJSON(http.StatusBadRequest, resp)
-		default:
 			resp := response.Response{
-				Errors: []string{err.Error()},
+				Errors: []string{errNoDuplication.Error()},
 			}
-			c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
+			c.AbortWithStatusJSON(http.StatusConflict, resp)
+			return
 		}
+		resp := response.Response{
+			Errors: []string{err.Error()},
+		}
+		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
 		return
 	}
 	resp := response.Response{
