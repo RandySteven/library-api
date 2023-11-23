@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"github.com/gin-gonic/gin"
 )
@@ -16,13 +16,13 @@ type BookHandler struct {
 func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 	books, err := handler.usecase.GetAllBooks()
 	if err != nil {
-		resp := payloads.Response{
+		resp := response.Response{
 			Errors: []string{err.Error()},
 		}
 		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
 		return
 	}
-	resp := payloads.Response{
+	resp := response.Response{
 		Message: "Success get all books",
 		Data:    books,
 	}
