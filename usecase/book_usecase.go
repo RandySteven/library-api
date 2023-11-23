@@ -11,6 +11,10 @@ type bookUseCase struct {
 
 // CreateBook implements interfaces.BookUseCase.
 func (usecase *bookUseCase) CreateBook(book *models.Book) (*models.Book, error) {
+	existBook, _ := usecase.repo.FindBookByTitle(book.Title)
+	if existBook != nil {
+		return nil, nil //Custom error
+	}
 	book, err := usecase.repo.Save(book)
 	return book, err
 }

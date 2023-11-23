@@ -10,6 +10,16 @@ type bookRepository struct {
 	db *gorm.DB
 }
 
+// FindBookByTitle implements interfaces.BookRepository.
+func (repo *bookRepository) FindBookByTitle(title string) (*models.Book, error) {
+	var book models.Book
+	err := repo.db.First(&book).Where("title = ?", title).Error
+	if err != nil {
+		return nil, err
+	}
+	return &book, nil
+}
+
 // Save implements interfaces.BookRepository.
 func (repo *bookRepository) Save(book *models.Book) (*models.Book, error) {
 	err := repo.db.Create(&book).Error

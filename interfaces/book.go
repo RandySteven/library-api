@@ -9,6 +9,7 @@ type (
 	BookRepository interface {
 		Find(searchBook *models.Book) ([]models.Book, error)
 		Save(book *models.Book) (*models.Book, error)
+		FindBookByTitle(title string) (*models.Book, error)
 	}
 
 	BookUseCase interface {
