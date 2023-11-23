@@ -21,7 +21,7 @@ type BookHandler struct {
 
 // CreateBook implements interfaces.BookHandler.
 func (handler *BookHandler) CreateBook(c *gin.Context) {
-	var request *request.BookRequest
+	var request request.BookRequest
 	if err := c.ShouldBind(&request); err != nil {
 		errorMsg := err.Error()
 		errors := strings.Split(errorMsg, "\n")

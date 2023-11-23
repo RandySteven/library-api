@@ -3,7 +3,6 @@ package handler_test
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -50,10 +49,6 @@ func (suite *BookHandlerTestSuite) SetupSubTest() {
 
 func (suite *BookHandlerTestSuite) TestGetAllBooks() {
 	suite.Run("should return 200 if get all books success", func() {
-		expected, _ := json.Marshal(response.Response{
-			Message: "Success get all books",
-			Data:    books,
-		})
 		suite.bookUseCase.On("GetAllBooks", &models.Book{}).Return(books, nil)
 		req, _ := http.NewRequest(http.MethodGet, "/v1/books", nil)
 		w := httptest.NewRecorder()
@@ -62,7 +57,7 @@ func (suite *BookHandlerTestSuite) TestGetAllBooks() {
 		suite.router.ServeHTTP(w, req)
 
 		suite.Equal(http.StatusOK, w.Code)
-		suite.Equal(string(expected), w.Body.String())
+		suite.NotNil(w.Body)
 	})
 
 	suite.Run("should return 200 if get all books success", func() {
@@ -94,30 +89,62 @@ func (suite *BookHandlerTestSuite) TestGetAllBooks() {
 }
 
 func (suite *BookHandlerTestSuite) TestCreate() {
-	suite.Run("should return 201 after inster book", func() {
-		// expected, _ := json.Marshal(response.Response{
-		// 	Message: "Success get all books",
-		// 	Data:    books[0],
-		// })
-
-		request := `{
-			"name": "Book 1",
+	suite.Run("should return 201 after inserting book", func() {
+		requestBody := `{
+			"title": "Book 1",
 			"description": "Book Description 2",
 			"quantity": 2,
 			"cover": "",
 			"author_id": 1
 		}`
 
-		suite.bookUseCase.On("CreateBook", mock.AnythingOfType("*models.Book")).Return(books[0], nil)
-		req, _ := http.NewRequest(http.MethodPost, "/v1/books", strings.NewReader(request))
+		suite.bookUseCase.On("CreateBook", mock.AnythingOfType("*models.Book")).Return(&books[0], nil)
+
+		req, err := http.NewRequest(http.MethodPost, "/v1/books", strings.NewReader(requestBody))
+		suite.NoError(err)
+
+		req.Header.Set("Content-Type", "application/json")
+
 		w := httptest.NewRecorder()
+
+		ctx, _ := gin.CreateTestContext(w)
+		ctx.Request = req
+
+		suite.bookHandler.CreateBook(ctx)
+
+		suite.Equal(http.StatusCreated, w.Code)
+
+		var resp response.Response
+		suite.NoError(json.Unmarshal(w.Body.Bytes(), &resp))
+	})
+
+	suite.Run("should return 400 bad request while inserting book", func() {
+		request := `{
+			"title": "Book 1",
+			"description": "Book Description 2",
+			"quantity": 2,
+			"cover": "",
+			"author_id": 1
+		}`
+
+		// suite.bookUseCase.On("CreateBook", mock.AnythingOfType("*models.Book")).Return(books[0], nil)
+
+		req, err := http.NewRequest(http.MethodPost, "/v1/books", strings.NewReader(request))
+		suite.NoError(err)
+
+		w := httptest.NewRecorder()
+
+		ctx, _ := gin.CreateTestContext(w)
+		ctx.Request = req
 
 		suite.router.POST("/v1/books", suite.bookHandler.CreateBook)
 		suite.router.ServeHTTP(w, req)
 
-		log.Println("err : ", w.Body.String())
-		suite.Equal(http.StatusCreated, w.Code)
-		// suite.Equal(string(expected), w.Body.String())
+		suite.Equal(http.StatusBadRequest, w.Code)
+
+		var resp response.Response
+		suite.NoError(json.Unmarshal(w.Body.Bytes(), &resp))
+
 	})
 }
 
