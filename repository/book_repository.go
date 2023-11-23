@@ -20,11 +20,11 @@ func (repo *bookRepository) Save(book *models.Book) (*models.Book, error) {
 }
 
 // Find implements interfaces.BookRepository.
-func (repo *bookRepository) Find(title string) ([]models.Book, error) {
+func (repo *bookRepository) Find(searchBook *models.Book) ([]models.Book, error) {
 	var books []models.Book
 	table := repo.db.Table("books")
-	if title != "" {
-		table = table.Where("title = ?", title)
+	if searchBook != nil {
+		table = table.Where(searchBook)
 	}
 	err := table.Find(&books).Error
 	if err != nil {

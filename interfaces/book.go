@@ -7,12 +7,12 @@ import (
 
 type (
 	BookRepository interface {
-		Find(title string) ([]models.Book, error)
+		Find(searchBook *models.Book) ([]models.Book, error)
 		Save(book *models.Book) (*models.Book, error)
 	}
 
 	BookUseCase interface {
-		GetAllBooks(title string) ([]models.Book, error)
+		GetAllBooks(searchBook *models.Book) ([]models.Book, error)
 		CreateBook(book *models.Book) (*models.Book, error)
 	}
 

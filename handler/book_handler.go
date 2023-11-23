@@ -9,6 +9,7 @@ import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type BookHandler struct {
@@ -25,15 +26,23 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 	book := &models.Book{
 		Title:       request.Title,
 		Description: request.Description,
-		Quantity:    request.Quantity,
+		Quantity:    *request.Quantity,
 		Cover:       request.Cover,
 	}
 	book, err := handler.usecase.CreateBook(book)
 	if err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
+		switch err {
+		case gorm.ErrDuplicatedKey:
+			resp := response.Response{
+				Errors: []string{"Bad Request title can't duplicate"},
+			}
+			c.AbortWithStatusJSON(http.StatusBadRequest, resp)
+		default:
+			resp := response.Response{
+				Errors: []string{err.Error()},
+			}
+			c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
 		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
 		return
 	}
 	resp := response.Response{
@@ -50,8 +59,9 @@ func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, "Bad request")
 		return
 	}
-	log.Println("title : ", book.Title)
-	books, err := handler.usecase.GetAllBooks(book.Title)
+	// log.Println("title : ", book.Title)
+	log.Println(book)
+	books, err := handler.usecase.GetAllBooks(&book)
 	if err != nil {
 		resp := response.Response{
 			Errors: []string{err.Error()},
