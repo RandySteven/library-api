@@ -73,6 +73,19 @@ func (suite *BookHandlerTestSuite) TestGetAllBooks() {
 		suite.Equal(http.StatusOK, w.Code)
 	})
 
+	suite.Run("should return 400 invalid query", func() {
+		r := gin.Default()
+
+		suite.router.GET("/v1/books", suite.bookHandler.GetAllBooks)
+		req, _ := http.NewRequest(http.MethodGet, "/v1/books?invalid=ERR", nil)
+		w := httptest.NewRecorder()
+
+		r.ServeHTTP(w, req)
+
+		suite.Equal(http.StatusNotFound, w.Code)
+
+	})
+
 	suite.Run("should return 500 while error in query", func() {
 
 		suite.bookUseCase.On("GetAllBooks", &models.Book{}).Return(nil, errors.New("Fake error"))

@@ -1,18 +1,14 @@
 package handler
 
 import (
-	"errors"
-	"log"
 	"net/http"
 	"strings"
 
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgconn"
 )
 
 type BookHandler struct {
@@ -41,37 +37,17 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 	}
 	book, err := handler.usecase.CreateBook(book)
 	if err != nil {
-		var psqlErr *pgconn.PgError
-		ok := errors.As(err, &psqlErr)
-		if ok && psqlErr.Code == "23505" {
-			errNoDuplication := apperror.ErrNoDuplication{
-				Resource: "books",
-				Field:    "title",
-				Value:    request.Title,
-			}
-			resp := response.Response{
-				Errors: []string{errNoDuplication.Error()},
-			}
-			c.AbortWithStatusJSON(http.StatusConflict, resp)
-			return
-		}
 		resp := response.Response{
 			Errors: []string{err.Error()},
 		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
+		c.AbortWithStatusJSON(http.StatusConflict, resp)
 		return
 	}
-	bookResponse := &response.BookResponse{
-		ID:          book.ID,
-		Title:       book.Title,
-		Description: book.Description,
-		Cover:       book.Description,
-		Quantity:    book.Quantity,
-		CreatedAt:   &book.CreatedAt,
-		UpdatedAt:   &book.UpdatedAt,
-		DeletedAt:   &book.DeletedAt,
-		Author:      nil,
-	}
+	bookResponse := response.NewBookResponse(book)
+	bookResponse.CreatedAt = &book.CreatedAt
+	bookResponse.UpdatedAt = &book.UpdatedAt
+	bookResponse.DeletedAt = &book.DeletedAt
+	bookResponse.Author = nil
 	resp := response.Response{
 		Message: "Success get all books",
 		Data:    bookResponse,
@@ -83,17 +59,10 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 	var search request.SearchBook
 	if err := c.ShouldBindQuery(&search); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, "Bad request")
+		c.AbortWithStatusJSON(http.StatusNotFound, "URL not found")
 		return
 	}
-	log.Println("title : ", search.Title)
-	book := &models.Book{
-		Title:       search.Title,
-		Description: search.Description,
-		Cover:       search.Cover,
-		Quantity:    search.Quantity,
-	}
-	log.Println(book)
+	book := search.SearchBookToBook()
 	books, err := handler.usecase.GetAllBooks(book)
 	if err != nil {
 		resp := response.Response{
@@ -104,14 +73,7 @@ func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 	}
 	var bookResponses []response.BookResponse
 	for _, book := range books {
-		bookResponse := &response.BookResponse{
-			ID:          book.ID,
-			Title:       book.Title,
-			Description: book.Description,
-			Quantity:    book.Quantity,
-			Cover:       book.Cover,
-			Author:      &book.Author,
-		}
+		bookResponse := response.NewBookResponse(&book)
 		bookResponses = append(bookResponses, *bookResponse)
 	}
 	resp := response.Response{

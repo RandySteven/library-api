@@ -18,3 +18,17 @@ type BookResponse struct {
 	UpdatedAt   *time.Time      `json:"updated_at,omitempty"`
 	DeletedAt   *gorm.DeletedAt `json:"deleted_at,omitempty"`
 }
+
+func NewBookResponse(book *models.Book) *BookResponse {
+	return &BookResponse{
+		ID:          book.ID,
+		Title:       book.Title,
+		Description: book.Description,
+		Quantity:    book.Quantity,
+		Cover:       book.Cover,
+		Author:      &book.Author,
+	}
+}
+
+// func (response *BookResponse) SetAdditionalInfo(book *models.Book) {
+// }
