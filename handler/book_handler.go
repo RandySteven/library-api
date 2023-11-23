@@ -54,14 +54,20 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 
 // GetAllBooks implements interfaces.BookHandler.
 func (handler *BookHandler) GetAllBooks(c *gin.Context) {
-	var book models.Book
-	if err := c.Bind(&book); err != nil {
+	var search request.SearchBook
+	if err := c.ShouldBindQuery(&search); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, "Bad request")
 		return
 	}
-	// log.Println("title : ", book.Title)
+	log.Println("title : ", search.Title)
+	book := &models.Book{
+		Title:       search.Title,
+		Description: search.Description,
+		Cover:       search.Cover,
+		Quantity:    search.Quantity,
+	}
 	log.Println(book)
-	books, err := handler.usecase.GetAllBooks(&book)
+	books, err := handler.usecase.GetAllBooks(book)
 	if err != nil {
 		resp := response.Response{
 			Errors: []string{err.Error()},
