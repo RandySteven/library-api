@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
@@ -20,7 +21,12 @@ type BookHandler struct {
 func (handler *BookHandler) CreateBook(c *gin.Context) {
 	var request *request.BookRequest
 	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, "Bad Request")
+		errorMsg := err.Error()
+		errors := strings.Split(errorMsg, "\n")
+		resp := response.Response{
+			Errors: errors,
+		}
+		c.AbortWithStatusJSON(http.StatusBadRequest, resp)
 		return
 	}
 	book := &models.Book{
