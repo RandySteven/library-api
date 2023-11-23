@@ -1,6 +1,7 @@
 package handler_test
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -35,7 +36,7 @@ func TestGetAllBooks(t *testing.T) {
 		bookHandler := handler.NewBookHandler(bookUseCase)
 		r := gin.Default()
 
-		bookUseCase.On("GetAllBooks").Return(books, nil)
+		bookUseCase.On("GetAllBooks", &models.Book{}).Return(books, nil)
 		req, _ := http.NewRequest(http.MethodGet, "/v1/books", nil)
 		w := httptest.NewRecorder()
 
@@ -45,4 +46,37 @@ func TestGetAllBooks(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 
 	})
+
+	t.Run("should return 200 if get all books success", func(t *testing.T) {
+		bookUseCase := mocks.NewBookUseCase(t)
+		bookHandler := handler.NewBookHandler(bookUseCase)
+		r := gin.Default()
+
+		bookUseCase.On("GetAllBooks", &models.Book{Title: "Book 1"}).Return(books, nil)
+		req, _ := http.NewRequest(http.MethodGet, "/v1/books", nil)
+		w := httptest.NewRecorder()
+
+		r.GET("/v1/books", bookHandler.GetAllBooks)
+		r.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+
+	})
+
+	t.Run("should return 500 while error in query", func(t *testing.T) {
+		bookUseCase := mocks.NewBookUseCase(t)
+		bookHandler := handler.NewBookHandler(bookUseCase)
+		r := gin.Default()
+
+		bookUseCase.On("GetAllBooks", &models.Book{}).Return(nil, errors.New("Fake error"))
+		req, _ := http.NewRequest(http.MethodGet, "/v1/books", nil)
+		w := httptest.NewRecorder()
+
+		r.GET("/v1/books", bookHandler.GetAllBooks)
+		r.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+
+	})
+
 }
