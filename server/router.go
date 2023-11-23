@@ -7,7 +7,7 @@ import (
 func (h *Handlers) InitRouter(r *gin.RouterGroup) {
 
 	bookRouter := r.Group("/books")
-	// bookRouter.POST("", h.BookHandler.CreateProduct)
+	bookRouter.POST("", h.BookHandler.CreateBook)
 	bookRouter.GET("", h.BookHandler.GetAllBooks)
 	// bookRouter.DELETE("/:id", h.BookHandler.DeleteProductById)
 	// bookRouter.GET("/:id", h.BookHandler.GetProductById)

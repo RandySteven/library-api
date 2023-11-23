@@ -10,10 +10,23 @@ type bookRepository struct {
 	db *gorm.DB
 }
 
+// Save implements interfaces.BookRepository.
+func (repo *bookRepository) Save(book *models.Book) (*models.Book, error) {
+	err := repo.db.Create(&book).Error
+	if err != nil {
+		return nil, err
+	}
+	return book, nil
+}
+
 // Find implements interfaces.BookRepository.
-func (repo *bookRepository) Find() ([]models.Book, error) {
+func (repo *bookRepository) Find(title string) ([]models.Book, error) {
 	var books []models.Book
-	err := repo.db.Table("books").Scan(&books).Error
+	table := repo.db.Table("books")
+	if title != "" {
+		table = table.Where("title = ?", title)
+	}
+	err := table.Find(&books).Error
 	if err != nil {
 		return nil, err
 	}

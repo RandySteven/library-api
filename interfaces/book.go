@@ -7,14 +7,17 @@ import (
 
 type (
 	BookRepository interface {
-		Find() ([]models.Book, error)
+		Find(title string) ([]models.Book, error)
+		Save(book *models.Book) (*models.Book, error)
 	}
 
 	BookUseCase interface {
-		GetAllBooks() ([]models.Book, error)
+		GetAllBooks(title string) ([]models.Book, error)
+		CreateBook(book *models.Book) (*models.Book, error)
 	}
 
 	BookHandler interface {
 		GetAllBooks(c *gin.Context)
+		CreateBook(c *gin.Context)
 	}
 )

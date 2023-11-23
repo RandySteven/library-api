@@ -18,6 +18,8 @@ func main() {
 	}
 	r := gin.Default()
 
+	//TO DO : take out from main
+	appPort := os.Getenv("APP_PORT")
 	dbName := os.Getenv("DB_NAME")
 	dbPort := os.Getenv("DB_PORT")
 	dbPass := os.Getenv("DB_PASS")
@@ -25,18 +27,19 @@ func main() {
 	dbUser := os.Getenv("DB_USER")
 	config := models.NewConfig(dbHost, dbPort, dbUser, dbPass, dbName)
 
-	service, err := configs.NewRepository(config)
+	//TO DO : take out from main
+	repository, err := configs.NewRepository(config)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	defer service.Close()
-	err = service.Automigrate()
+	defer repository.Close()
+	err = repository.Automigrate()
 	if err != nil {
 		return
 	}
 
-	handlers, err := server.NewHandlers(*service)
+	handlers, err := server.NewHandlers(*repository)
 	if err != nil {
 		return
 	}
@@ -45,9 +48,8 @@ func main() {
 	handlers.InitRouter(v1)
 
 	srv := http.Server{
-		Addr:    ":8080",
+		Addr:    ":" + appPort,
 		Handler: r,
 	}
 	srv.ListenAndServe()
-	os.Exit(0)
 }

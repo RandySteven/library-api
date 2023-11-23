@@ -9,9 +9,14 @@ type bookUseCase struct {
 	repo interfaces.BookRepository
 }
 
+// CreateBook implements interfaces.BookUseCase.
+func (usecase *bookUseCase) CreateBook(book *models.Book) (*models.Book, error) {
+	return usecase.repo.Save(book)
+}
+
 // GetAllBooks implements interfaces.BookUseCase.
-func (usecase *bookUseCase) GetAllBooks() ([]models.Book, error) {
-	return usecase.repo.Find()
+func (usecase *bookUseCase) GetAllBooks(title string) ([]models.Book, error) {
+	return usecase.repo.Find(title)
 }
 
 func NewBookUseCase(repo interfaces.BookRepository) *bookUseCase {
