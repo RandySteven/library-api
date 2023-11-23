@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/mocks"
@@ -101,15 +100,16 @@ func (suite *BookHandlerTestSuite) TestCreate() {
 		// 	Data:    books[0],
 		// })
 
-		var numb uint = 2
-		request, _ := json.Marshal(request.BookRequest{
-			Title:       "Book 1",
-			Description: "Book Description 1",
-			Quantity:    &numb,
-		})
+		request := `{
+			"name": "Book 1",
+			"description": "Book Description 2",
+			"quantity": 2,
+			"cover": "",
+			"author_id": 1
+		}`
 
 		suite.bookUseCase.On("CreateBook", mock.AnythingOfType("*models.Book")).Return(books[0], nil)
-		req, _ := http.NewRequest(http.MethodPost, "/v1/books", strings.NewReader(string(request)))
+		req, _ := http.NewRequest(http.MethodPost, "/v1/books", strings.NewReader(request))
 		w := httptest.NewRecorder()
 
 		suite.router.POST("/v1/books", suite.bookHandler.CreateBook)
