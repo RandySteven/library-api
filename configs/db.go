@@ -14,8 +14,10 @@ import (
 )
 
 type Repository struct {
-	BookRepository   interfaces.BookRepository
 	AuthorRepository interfaces.AuthorRepository
+	BookRepository   interfaces.BookRepository
+	BorrowRepository interfaces.BorrowRepository
+	UserRepository   interfaces.UserRepository
 	db               *gorm.DB
 }
 
@@ -37,8 +39,10 @@ func NewRepository(config *models.Config) (*Repository, error) {
 	}
 	// defer db.Close()
 	return &Repository{
-		BookRepository:   repository.NewBookRepository(db),
 		AuthorRepository: repository.NewAuthorRepository(db),
+		BookRepository:   repository.NewBookRepository(db),
+		UserRepository:   repository.NewUserRepository(db),
+		BorrowRepository: repository.NewBorrowRepository(db),
 		db:               db,
 	}, nil
 }
@@ -49,6 +53,9 @@ func (repo *Repository) Close() <-chan struct{} {
 
 func (r *Repository) Automigrate() error {
 	return r.db.AutoMigrate(
+		&models.Author{},
+		&models.User{},
 		&models.Book{},
+		&models.Borrow{},
 	)
 }

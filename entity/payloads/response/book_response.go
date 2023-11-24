@@ -37,5 +37,14 @@ func NewBookResponse(book *models.Book, withAuthor bool) *BookResponse {
 	return bookResponse
 }
 
+func GetAllBookResponses(books []models.Book) []BookResponse {
+	var responses []BookResponse
+	for _, book := range books {
+		response := NewBookResponse(&book, true)
+		responses = append(responses, *response)
+	}
+	return responses
+}
+
 // func (response *BookResponse) SetAdditionalInfo(book *models.Book) {
 // }

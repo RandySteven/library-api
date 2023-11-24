@@ -13,8 +13,13 @@ func (h *Handlers) InitRouter(r *gin.RouterGroup) {
 	// bookRouter.GET("/:id", h.BookHandler.GetProductById)
 	// bookRouter.PUT("/:id", h.BookHandler.UpdateProductById)
 
-	// userRouter := r.PathPrefix("/users").Subrouter()
+	userRouter := r.Group("/users")
+	userRouter.POST("", h.UserHandler.CreateUser)
+	userRouter.GET("", h.UserHandler.GetAllUsers)
 	// userRouter.Use(h.RoleMiddleware)
 	// userRouter.HandleFunc("", h.UserHandler.GetAllUsers).Methods(http.MethodGet)
 	// userRouter.HandleFunc("/{id}", h.UserHandler.GetUserById).Methods(http.MethodGet)
+
+	borrowRouter := r.Group("/borrows")
+	borrowRouter.POST("", h.BorrowHandler.CreateBorrowRecord)
 }

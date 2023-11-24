@@ -14,13 +14,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type BookHandler struct {
-	usecase interfaces.BookUseCase
+type UserHandler struct {
+	usecase interfaces.UserUseCase
 }
 
-// CreateBook implements interfaces.BookHandler.
-func (handler *BookHandler) CreateBook(c *gin.Context) {
-	var request request.BookRequest
+// CreateUser implements interfaces.UserHandler.
+func (handler *UserHandler) CreateUser(c *gin.Context) {
+	var request request.UserRequest
 	if err := c.ShouldBind(&request); err != nil {
 		errorMsg := err.Error()
 		errors := strings.Split(errorMsg, "\n")
@@ -31,16 +31,13 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 		return
 	}
 
-	request.Title = strings.Title(request.Title)
-	book := &models.Book{
-		Title:       request.Title,
-		Description: request.Description,
-		Quantity:    *request.Quantity,
-		Cover:       request.Cover,
-		AuthorID:    request.AuthorID,
+	user := &models.User{
+		Name:        request.Name,
+		Email:       request.Email,
+		PhoneNumber: request.PhoneNumber,
 	}
 
-	book, err := handler.usecase.CreateBook(book)
+	user, err := handler.usecase.CreateUser(user)
 	if err != nil {
 		resp := response.Response{
 			Errors: []string{err.Error()},
@@ -48,22 +45,17 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusConflict, resp)
 		return
 	}
-
-	bookResponse := response.NewBookResponse(book, false)
 	resp := response.Response{
-		Message: "Success get all books",
-		Data:    bookResponse,
+		Message: "Success create user",
+		Data:    user,
 	}
 	c.JSON(http.StatusCreated, resp)
 }
 
-// GetAllBooks implements interfaces.BookHandler.
-func (handler *BookHandler) GetAllBooks(c *gin.Context) {
-	var search request.SearchBook
-	if err := c.ShouldBindQuery(&search); err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, "URL not found")
-		return
-	}
+// GetAllUsers implements interfaces.UserHandler.
+func (handler *UserHandler) GetAllUsers(c *gin.Context) {
+	var search request.SearchUser
+	c.ShouldBindQuery(&search)
 
 	val := reflect.ValueOf(&search).Elem()
 	var whereClauses []query.WhereClause
@@ -76,7 +68,7 @@ func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 		whereClauses = append(whereClauses, *whereClause)
 	}
 
-	books, err := handler.usecase.GetAllBooks(whereClauses)
+	users, err := handler.usecase.GetAllUsers(whereClauses)
 	if err != nil {
 		resp := response.Response{
 			Errors: []string{err.Error()},
@@ -85,17 +77,15 @@ func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 		return
 	}
 
-	var bookResponses = response.GetAllBookResponses(books)
-
 	resp := response.Response{
-		Message: "Success get all books",
-		Data:    bookResponses,
+		Message: "Success get all users",
+		Data:    users,
 	}
 	c.JSON(http.StatusOK, resp)
 }
 
-func NewBookHandler(usecase interfaces.BookUseCase) *BookHandler {
-	return &BookHandler{usecase}
+func NewUserHandler(usecase interfaces.UserUseCase) *UserHandler {
+	return &UserHandler{usecase: usecase}
 }
 
-var _ interfaces.BookHandler = &BookHandler{}
+var _ interfaces.UserHandler = &UserHandler{}

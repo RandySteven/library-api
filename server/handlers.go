@@ -9,15 +9,21 @@ import (
 
 type (
 	Handlers struct {
-		BookHandler interfaces.BookHandler
+		BookHandler   interfaces.BookHandler
+		UserHandler   interfaces.UserHandler
+		BorrowHandler interfaces.BorrowHandler
 	}
 )
 
 func NewHandlers(repo configs.Repository) (*Handlers, error) {
 	bookUsecase := usecase.NewBookUseCase(repo.BookRepository, repo.AuthorRepository)
+	userUsecase := usecase.NewUserUseCase(repo.UserRepository)
+	borrowUsecase := usecase.NewBorrowUseCase(repo.BorrowRepository)
 
 	return &Handlers{
-		BookHandler: handler.NewBookHandler(bookUsecase),
+		BookHandler:   handler.NewBookHandler(bookUsecase),
+		UserHandler:   handler.NewUserHandler(userUsecase),
+		BorrowHandler: handler.NewBorrowHandler(borrowUsecase),
 	}, nil
 }
 
