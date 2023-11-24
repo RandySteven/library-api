@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"log"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
@@ -15,12 +16,13 @@ type bookRepository struct {
 
 // FindBookByTitle implements interfaces.BookRepository.
 func (repo *bookRepository) FindBookByTitle(title string) (*models.Book, error) {
-	var book models.Book
-	err := repo.db.First(&book).Where("title = ?", title).Error
+	var book *models.Book
+	err := repo.db.Table("books").Where("title = ?", title).Scan(&book).Error
+	log.Println(book)
 	if err != nil {
 		return nil, err
 	}
-	return &book, nil
+	return book, nil
 }
 
 // Save implements interfaces.BookRepository.

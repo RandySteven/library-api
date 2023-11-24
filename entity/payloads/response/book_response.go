@@ -13,7 +13,7 @@ type BookResponse struct {
 	Description string          `json:"description"`
 	Quantity    uint            `json:"quantity"`
 	Cover       string          `json:"cover"`
-	Author      *models.Author  `json:"author,omitempty"`
+	Author      string          `json:"author,omitempty"`
 	CreatedAt   *time.Time      `json:"created_at,omitempty"`
 	UpdatedAt   *time.Time      `json:"updated_at,omitempty"`
 	DeletedAt   *gorm.DeletedAt `json:"deleted_at,omitempty"`
@@ -26,7 +26,7 @@ func NewBookResponse(book *models.Book) *BookResponse {
 		Description: book.Description,
 		Quantity:    book.Quantity,
 		Cover:       book.Cover,
-		Author:      &book.Author,
+		Author:      book.Author.Name,
 	}
 }
 

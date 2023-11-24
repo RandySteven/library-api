@@ -50,7 +50,6 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 	bookResponse.CreatedAt = &book.CreatedAt
 	bookResponse.UpdatedAt = &book.UpdatedAt
 	bookResponse.DeletedAt = &book.DeletedAt
-	bookResponse.Author = nil
 	resp := response.Response{
 		Message: "Success get all books",
 		Data:    bookResponse,

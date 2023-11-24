@@ -8,26 +8,30 @@ import (
 )
 
 type bookUseCase struct {
-	repo interfaces.BookRepository
+	bookRepo   interfaces.BookRepository
+	authorRepo interfaces.AuthorRepository
 }
 
 // CreateBook implements interfaces.BookUseCase.
 func (usecase *bookUseCase) CreateBook(book *models.Book) (*models.Book, error) {
-	existBook, _ := usecase.repo.FindBookByTitle(book.Title)
-	if existBook != nil {
+	bookExists, _ := usecase.bookRepo.FindBookByTitle(book.Title)
+	if bookExists != nil {
 		return nil, apperror.NewErrNoDuplication("books", "title", book.Title).Err
 	}
-	book, err := usecase.repo.Save(book)
+	book, err := usecase.bookRepo.Save(book)
 	return book, err
 }
 
 // GetAllBooks implements interfaces.BookUseCase.
 func (usecase *bookUseCase) GetAllBooks(whereClauses []query.WhereClause) ([]models.Book, error) {
-	return usecase.repo.Find(whereClauses)
+	return usecase.bookRepo.Find(whereClauses)
 }
 
-func NewBookUseCase(repo interfaces.BookRepository) *bookUseCase {
-	return &bookUseCase{repo}
+func NewBookUseCase(
+	bookRepo interfaces.BookRepository,
+	authorRepo interfaces.AuthorRepository,
+) *bookUseCase {
+	return &bookUseCase{bookRepo, authorRepo}
 }
 
 var _ interfaces.BookUseCase = &bookUseCase{}

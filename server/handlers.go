@@ -14,7 +14,7 @@ type (
 )
 
 func NewHandlers(repo configs.Repository) (*Handlers, error) {
-	bookUsecase := usecase.NewBookUseCase(repo.BookRepository)
+	bookUsecase := usecase.NewBookUseCase(repo.BookRepository, repo.AuthorRepository)
 
 	return &Handlers{
 		BookHandler: handler.NewBookHandler(bookUsecase),

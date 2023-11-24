@@ -1,0 +1,17 @@
+mode: set
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:19.56,21.47 2 1
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:30.2,39.16 4 1
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:46.2,55.34 7 1
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:21.47,29.3 5 1
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:39.16,45.3 3 0
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:59.57,61.51 2 1
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:65.2,67.16 3 1
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:74.2,75.29 2 1
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:79.2,83.29 2 1
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:61.51,64.3 2 0
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:67.16,73.3 3 1
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:75.29,78.3 2 1
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/book_handler.go:86.66,88.2 1 1
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/author_handler.go:13.52,14.24 1 0
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/author_handler.go:18.53,19.24 1 0
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/author_handler.go:22.72,24.2 1 0

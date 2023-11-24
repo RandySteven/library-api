@@ -14,8 +14,9 @@ import (
 )
 
 type Repository struct {
-	BookRepository interfaces.BookRepository
-	db             *gorm.DB
+	BookRepository   interfaces.BookRepository
+	AuthorRepository interfaces.AuthorRepository
+	db               *gorm.DB
 }
 
 func NewRepository(config *models.Config) (*Repository, error) {
@@ -36,8 +37,9 @@ func NewRepository(config *models.Config) (*Repository, error) {
 	}
 	// defer db.Close()
 	return &Repository{
-		BookRepository: repository.NewBookRepository(db),
-		db:             db,
+		BookRepository:   repository.NewBookRepository(db),
+		AuthorRepository: repository.NewAuthorRepository(db),
+		db:               db,
 	}, nil
 }
 
