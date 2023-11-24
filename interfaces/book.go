@@ -2,18 +2,19 @@ package interfaces
 
 import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
 	"github.com/gin-gonic/gin"
 )
 
 type (
 	BookRepository interface {
-		Find(searchBook *models.Book) ([]models.Book, error)
+		Find(whereClause []query.WhereClause) ([]models.Book, error)
 		Save(book *models.Book) (*models.Book, error)
 		FindBookByTitle(title string) (*models.Book, error)
 	}
 
 	BookUseCase interface {
-		GetAllBooks(searchBook *models.Book) ([]models.Book, error)
+		GetAllBooks(whereClause []query.WhereClause) ([]models.Book, error)
 		CreateBook(book *models.Book) (*models.Book, error)
 	}
 

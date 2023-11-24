@@ -4,6 +4,7 @@ package mocks
 
 import (
 	models "git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
+	query "git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -12,13 +13,13 @@ type BookRepository struct {
 	mock.Mock
 }
 
-// Find provides a mock function with given fields: searchBook
-func (_m *BookRepository) Find(searchBook *models.Book) ([]models.Book, error) {
-	ret := _m.Called(searchBook)
+// Find provides a mock function with given fields: whereClause
+func (_m *BookRepository) Find(whereClause []query.WhereClause) ([]models.Book, error) {
+	ret := _m.Called(whereClause)
 
 	var r0 []models.Book
-	if rf, ok := ret.Get(0).(func(*models.Book) []models.Book); ok {
-		r0 = rf(searchBook)
+	if rf, ok := ret.Get(0).(func([]query.WhereClause) []models.Book); ok {
+		r0 = rf(whereClause)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]models.Book)
@@ -26,8 +27,31 @@ func (_m *BookRepository) Find(searchBook *models.Book) ([]models.Book, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*models.Book) error); ok {
-		r1 = rf(searchBook)
+	if rf, ok := ret.Get(1).(func([]query.WhereClause) error); ok {
+		r1 = rf(whereClause)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// FindBookByTitle provides a mock function with given fields: title
+func (_m *BookRepository) FindBookByTitle(title string) (*models.Book, error) {
+	ret := _m.Called(title)
+
+	var r0 *models.Book
+	if rf, ok := ret.Get(0).(func(string) *models.Book); ok {
+		r0 = rf(title)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Book)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(title)
 	} else {
 		r1 = ret.Error(1)
 	}

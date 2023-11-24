@@ -49,7 +49,7 @@ func (suite *BookHandlerTestSuite) SetupSubTest() {
 
 func (suite *BookHandlerTestSuite) TestGetAllBooks() {
 	suite.Run("should return 200 if get all books success", func() {
-		suite.bookUseCase.On("GetAllBooks", &models.Book{}).Return(books, nil)
+		suite.bookUseCase.On("GetAllBooks", mock.AnythingOfType("[]query.WhereClause")).Return(books, nil)
 		req, _ := http.NewRequest(http.MethodGet, "/v1/books", nil)
 		w := httptest.NewRecorder()
 
@@ -60,10 +60,10 @@ func (suite *BookHandlerTestSuite) TestGetAllBooks() {
 		suite.NotNil(w.Body)
 	})
 
-	suite.Run("should return 200 if get all books success", func() {
+	suite.Run("should return 200 if get all books success filter by query", func() {
 		r := gin.Default()
 
-		suite.bookUseCase.On("GetAllBooks", &models.Book{}).Return(books, nil)
+		suite.bookUseCase.On("GetAllBooks", mock.AnythingOfType("[]query.WhereClause")).Return(books, nil)
 		req, _ := http.NewRequest(http.MethodGet, "/v1/books", nil)
 		w := httptest.NewRecorder()
 
@@ -88,7 +88,7 @@ func (suite *BookHandlerTestSuite) TestGetAllBooks() {
 
 	suite.Run("should return 500 while error in query", func() {
 
-		suite.bookUseCase.On("GetAllBooks", &models.Book{}).Return(nil, errors.New("Fake error"))
+		suite.bookUseCase.On("GetAllBooks", mock.AnythingOfType("*query.WhereClause")).Return(nil, errors.New("Fake error"))
 		req, _ := http.NewRequest(http.MethodGet, "/v1/books", nil)
 		w := httptest.NewRecorder()
 

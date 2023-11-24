@@ -1,8 +1,11 @@
 package repository
 
 import (
+	"fmt"
+
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
 	"gorm.io/gorm"
 )
 
@@ -30,21 +33,18 @@ func (repo *bookRepository) Save(book *models.Book) (*models.Book, error) {
 }
 
 // Find implements interfaces.BookRepository.
-func (repo *bookRepository) Find(searchBook *models.Book) ([]models.Book, error) {
+func (repo *bookRepository) Find(whereClauses []query.WhereClause) ([]models.Book, error) {
 	var books []models.Book
 	table := repo.db.Model(&models.Book{}).
 		Preload("Author")
-	if searchBook != nil {
-		if searchBook.Title != "" {
-			table = table.Where("title ilike ?", "%"+searchBook.Title+"%")
+	for _, clause := range whereClauses {
+		query := fmt.Sprintf("%s %s ?", clause.Field, clause.Condition)
+		if len(clause.Value) > 1 {
+			table = table.Where(query, "%"+clause.Value+"%")
 		}
-		if searchBook.Description != "" {
-			table = table.Where("description ilike ?", "%"+searchBook.Description+"%")
-		}
-		if searchBook.Cover != "" {
-			table = table.Where("cover ilike ?", "%"+searchBook.Cover+"%")
-		}
+
 	}
+
 	err := table.Find(&books).Error
 	if err != nil {
 		return nil, err
