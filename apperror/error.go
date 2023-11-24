@@ -32,6 +32,10 @@ type ErrBorrowStatusAlreadyReturned struct {
 	Err error
 }
 
+type ErrBadRequest struct {
+	Err error
+}
+
 func NewErrNoDuplication(resource, field, value string) *ErrNoDuplication {
 	return &ErrNoDuplication{
 		Resource: resource,
@@ -44,6 +48,12 @@ func NewErrNoDuplication(resource, field, value string) *ErrNoDuplication {
 func NewErrBookIdNotFound() *ErrBookIdNotFound {
 	return &ErrBookIdNotFound{
 		Err: errors.New("book id not found"),
+	}
+}
+
+func NewErrBadRequest(message string) *ErrBadRequest {
+	return &ErrBadRequest{
+		Err: fmt.Errorf(message),
 	}
 }
 
@@ -82,5 +92,9 @@ func (e *ErrBorrowStatusAlreadyReturned) Error() string {
 }
 
 func (e *ErrUserIdNotFound) Error() string {
+	return e.Err.Error()
+}
+
+func (e *ErrBadRequest) Error() string {
 	return e.Err.Error()
 }

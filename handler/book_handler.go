@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strings"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
@@ -22,12 +23,13 @@ type BookHandler struct {
 func (handler *BookHandler) CreateBook(c *gin.Context) {
 	var request request.BookRequest
 	if err := c.ShouldBind(&request); err != nil {
-		errorMsg := err.Error()
-		errors := strings.Split(errorMsg, "\n")
-		resp := response.Response{
-			Errors: errors,
-		}
-		c.AbortWithStatusJSON(http.StatusBadRequest, resp)
+		// errorMsg := err.Error()
+		// errors := strings.Split(errorMsg, "\n")
+		// resp := response.Response{
+		// 	Errors: errors,
+		// }
+		// c.AbortWithStatusJSON(http.StatusBadRequest, resp)
+		c.Error(apperror.NewErrBadRequest(err.Error()))
 		return
 	}
 
@@ -42,10 +44,11 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 
 	book, err := handler.usecase.CreateBook(book)
 	if err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		c.AbortWithStatusJSON(http.StatusConflict, resp)
+		// resp := response.Response{
+		// 	Errors: []string{err.Error()},
+		// }
+		// c.AbortWithStatusJSON(http.StatusConflict, resp)
+		c.Error(err)
 		return
 	}
 
@@ -61,7 +64,8 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 	var search request.SearchBook
 	if err := c.ShouldBindQuery(&search); err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, "URL not found")
+		// c.AbortWithStatusJSON(http.StatusNotFound, "URL not found")
+		c.Error(err)
 		return
 	}
 
@@ -78,10 +82,11 @@ func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 
 	books, err := handler.usecase.GetAllBooks(whereClauses)
 	if err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
+		// resp := response.Response{
+		// 	Errors: []string{err.Error()},
+		// }
+		// c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
+		c.Error(err)
 		return
 	}
 

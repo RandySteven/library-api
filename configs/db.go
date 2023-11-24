@@ -56,6 +56,6 @@ func (r *Repository) Automigrate() error {
 	)
 }
 
-// func (r *Repository) TrxBegin() *gorm.DB {
-// 	return r.db.Begin()
-// }
+func (r *Repository) TrxBegin() *gorm.DB {
+	return r.db.Begin()
+}

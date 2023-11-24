@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
-	"strings"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
@@ -23,12 +22,13 @@ type UserHandler struct {
 func (handler *UserHandler) CreateUser(c *gin.Context) {
 	var request request.UserRequest
 	if err := c.ShouldBind(&request); err != nil {
-		errorMsg := err.Error()
-		errors := strings.Split(errorMsg, "\n")
-		resp := response.Response{
-			Errors: errors,
-		}
-		c.AbortWithStatusJSON(http.StatusBadRequest, resp)
+		// errorMsg := err.Error()
+		// errors := strings.Split(errorMsg, "\n")
+		// resp := response.Response{
+		// 	Errors: errors,
+		// }
+		// c.AbortWithStatusJSON(http.StatusBadRequest, resp)
+		c.Error(err)
 		return
 	}
 
@@ -40,10 +40,11 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 
 	user, err := handler.usecase.CreateUser(user)
 	if err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		c.AbortWithStatusJSON(http.StatusConflict, resp)
+		// resp := response.Response{
+		// 	Errors: []string{err.Error()},
+		// }
+		// c.AbortWithStatusJSON(http.StatusConflict, resp)
+		c.Error(err)
 		return
 	}
 	resp := response.Response{

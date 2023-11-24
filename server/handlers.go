@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"net/http"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
@@ -69,13 +70,18 @@ func (h Handlers) ErrorMiddleware() gin.HandlerFunc {
 		c.Next()
 		var errBookIdNotFound *apperror.ErrBookIdNotFound
 		var errBookQuantityZero *apperror.ErrBookQuantityZero
+		var errBadRequest *apperror.ErrBadRequest
 		for _, ginErr := range c.Errors {
 			switch {
 			case errors.Is(ginErr.Err, errBookIdNotFound):
-
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ginErr.Error()})
 			case errors.Is(ginErr.Err, errBookQuantityZero):
-
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ginErr.Error()})
+			case errors.Is(ginErr.Err, errBadRequest):
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ginErr.Error()})
 			}
+
+			c.JSON(http.StatusInternalServerError, gin.H{"errors": ginErr.Error()})
 		}
 	}
 }
