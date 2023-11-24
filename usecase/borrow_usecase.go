@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"time"
+
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/enums"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
@@ -18,8 +20,10 @@ func (usecase *borrowUseCase) ReturnBorrowedBookByBorrowId(id uint) (*models.Bor
 
 // CreateBorrowRecord implements interfaces.BorrowUseCase.
 func (usecase *borrowUseCase) CreateBorrowRecord(borrow *models.Borrow) (*models.Borrow, error) {
+	tx := usecase.repo.GetBorrowTx()
 	borrow.BorrowStatus = enums.Borrowed
-	return usecase.repo.Save(borrow)
+	borrow.BorrowingDate = time.Now()
+	return usecase.repo.Save(borrow, tx)
 }
 
 // GetAllBorrowsRecord implements interfaces.BorrowUseCase.

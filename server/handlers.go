@@ -1,10 +1,14 @@
 package server
 
 import (
+	"errors"
+
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/usecase"
+	"github.com/gin-gonic/gin"
 )
 
 type (
@@ -59,6 +63,22 @@ func NewHandlers(repo configs.Repository) (*Handlers, error) {
 // 		c.Abort()
 // 		return
 // 	}
+
+func (h Handlers) ErrorMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
+		var errBookIdNotFound *apperror.ErrBookIdNotFound
+		var errBookQuantityZero *apperror.ErrBookQuantityZero
+		for _, ginErr := range c.Errors {
+			switch {
+			case errors.Is(ginErr.Err, errBookIdNotFound):
+
+			case errors.Is(ginErr.Err, errBookQuantityZero):
+
+			}
+		}
+	}
+}
 
 // 	if claims.User != nil && claims.User.RoleID != 1 {
 // 		resp := response.Response{

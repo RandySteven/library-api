@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
@@ -10,6 +11,7 @@ import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type borrowRepository struct {
@@ -48,7 +50,10 @@ func (repo *borrowRepository) ReturnBookByBorrowId(id uint) (*models.Borrow, err
 
 	err = tx.Model(&borrow).
 		Where("id = ?", id).
-		Update("borrow_status", enums.Returned).Error
+		Updates(map[string]interface{}{
+			"borrow_status":  enums.Returned,
+			"returning_date": time.Now(),
+		}).Error
 	if err != nil {
 		return nil, err
 	}
@@ -78,9 +83,12 @@ func (repo *borrowRepository) Find(whereClauses []query.WhereClause) ([]models.B
 
 }
 
+func (repo *borrowRepository) GetBorrowTx() *gorm.DB {
+	return repo.db.Begin()
+}
+
 // Save implements interfaces.BorrowRepository.
-func (repo *borrowRepository) Save(borrow *models.Borrow) (*models.Borrow, error) {
-	tx := repo.db.Begin()
+func (repo *borrowRepository) Save(borrow *models.Borrow, tx *gorm.DB) (*models.Borrow, error) {
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -88,8 +96,16 @@ func (repo *borrowRepository) Save(borrow *models.Borrow) (*models.Borrow, error
 		}
 	}()
 
+	var user *models.User
+	err := tx.Model(&models.User{}).
+		Where("id = ?", borrow.UserID).
+		Scan(&user).Error
+	if err != nil || user == nil {
+		return nil, apperror.NewErrUserIdNotFound()
+	}
+
 	var book *models.Book
-	err := tx.Model(&models.Book{}).
+	err = tx.Clauses(clause.Locking{Strength: "UPDATE"}).Model(&models.Book{}).
 		Where("id = ? ", borrow.BookID).
 		Scan(&book).Error
 	if err != nil || book == nil {

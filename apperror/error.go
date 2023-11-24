@@ -16,6 +16,10 @@ type ErrBookIdNotFound struct {
 	Err error
 }
 
+type ErrUserIdNotFound struct {
+	Err error
+}
+
 type ErrNoColumnExists struct {
 	Err error
 }
@@ -55,6 +59,12 @@ func NewErrBorrowStatusAlreadyReturned() *ErrBorrowStatusAlreadyReturned {
 	}
 }
 
+func NewErrUserIdNotFound() *ErrUserIdNotFound {
+	return &ErrUserIdNotFound{
+		Err: errors.New("user id not found"),
+	}
+}
+
 func (e *ErrNoDuplication) Error() string {
 	return e.Err.Error()
 }
@@ -68,5 +78,9 @@ func (e *ErrBookQuantityZero) Error() string {
 }
 
 func (e *ErrBorrowStatusAlreadyReturned) Error() string {
+	return e.Err.Error()
+}
+
+func (e *ErrUserIdNotFound) Error() string {
 	return e.Err.Error()
 }

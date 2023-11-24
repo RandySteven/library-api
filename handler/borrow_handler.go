@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
@@ -51,8 +52,10 @@ func (handler *BorrowHandler) ReturnBorrowBook(c *gin.Context) {
 func (handler *BorrowHandler) CreateBorrowRecord(c *gin.Context) {
 	var request request.BorrowRequest
 	if err := c.ShouldBind(&request); err != nil {
+		errorMsg := err.Error()
+		errors := strings.Split(errorMsg, "\n")
 		resp := response.Response{
-			Errors: []string{err.Error()},
+			Errors: errors,
 		}
 		c.AbortWithStatusJSON(http.StatusBadRequest, resp)
 		return
@@ -65,15 +68,18 @@ func (handler *BorrowHandler) CreateBorrowRecord(c *gin.Context) {
 
 	borrowRecord, err := handler.usecase.CreateBorrowRecord(borrow)
 	if err != nil {
-		var errBookIdNotFound apperror.ErrBookIdNotFound
-		var errBookQuantityZero apperror.ErrBookQuantityZero
+		var errBookIdNotFound *apperror.ErrBookIdNotFound
+		var errBookQuantityZero *apperror.ErrBookQuantityZero
+		var errUserIdNotFound *apperror.ErrUserIdNotFound
 		var httpStatus int
 		resp := response.Response{
 			Errors: []string{err.Error()},
 		}
-		if errors.As(err, &errBookIdNotFound.Err) {
+		if errors.As(err, &errUserIdNotFound) {
 			httpStatus = http.StatusNotFound
-		} else if errors.As(err, &errBookQuantityZero.Err) {
+		} else if errors.As(err, &errBookIdNotFound) {
+			httpStatus = http.StatusNotFound
+		} else if errors.As(err, &errBookQuantityZero) {
 			httpStatus = http.StatusBadRequest
 		}
 		c.AbortWithStatusJSON(httpStatus, resp)

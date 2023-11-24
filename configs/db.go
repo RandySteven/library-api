@@ -47,10 +47,6 @@ func NewRepository(config *models.Config) (*Repository, error) {
 	}, nil
 }
 
-func (repo *Repository) Close() <-chan struct{} {
-	return repo.db.Statement.Context.Done()
-}
-
 func (r *Repository) Automigrate() error {
 	return r.db.AutoMigrate(
 		&models.Author{},
@@ -59,3 +55,7 @@ func (r *Repository) Automigrate() error {
 		&models.Borrow{},
 	)
 }
+
+// func (r *Repository) TrxBegin() *gorm.DB {
+// 	return r.db.Begin()
+// }
