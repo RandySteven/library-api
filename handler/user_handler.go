@@ -9,6 +9,7 @@ import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/enums"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
 	"github.com/gin-gonic/gin"
@@ -63,7 +64,7 @@ func (handler *UserHandler) GetAllUsers(c *gin.Context) {
 		whereClause := &query.WhereClause{
 			Field:     val.Type().Field(i).Name,
 			Value:     fmt.Sprintf("%v", val.Field(i).Interface()),
-			Condition: "ilike",
+			Condition: enums.Ilike,
 		}
 		whereClauses = append(whereClauses, *whereClause)
 	}

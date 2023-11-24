@@ -11,6 +11,11 @@ type borrowUseCase struct {
 	repo interfaces.BorrowRepository
 }
 
+// ReturnBorrowedBook implements interfaces.BorrowUseCase.
+func (usecase *borrowUseCase) ReturnBorrowedBook(borrow *models.Borrow) (*models.Borrow, error) {
+	return usecase.repo.ReturnBook(borrow)
+}
+
 // CreateBorrowRecord implements interfaces.BorrowUseCase.
 func (usecase *borrowUseCase) CreateBorrowRecord(borrow *models.Borrow) (*models.Borrow, error) {
 	borrow.BorrowStatus = enums.Borrowed

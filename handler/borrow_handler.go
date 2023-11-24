@@ -1,17 +1,28 @@
 package handler
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
+	"reflect"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/enums"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
 	"github.com/gin-gonic/gin"
 )
 
 type BorrowHandler struct {
 	usecase interfaces.BorrowUseCase
+}
+
+// ReturnBorrowBook implements interfaces.BorrowHandler.
+func (*BorrowHandler) ReturnBorrowBook(c *gin.Context) {
+	panic("unimplemented")
 }
 
 // CreateBorrowRecord implements interfaces.BorrowHandler.
@@ -32,10 +43,18 @@ func (handler *BorrowHandler) CreateBorrowRecord(c *gin.Context) {
 
 	borrowRecord, err := handler.usecase.CreateBorrowRecord(borrow)
 	if err != nil {
+		var errBookIdNotFound apperror.ErrBookIdNotFound
+		var errBookQuantityZero apperror.ErrBookQuantityZero
+		var httpStatus int
 		resp := response.Response{
 			Errors: []string{err.Error()},
 		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
+		if errors.As(err, &errBookIdNotFound.Err) {
+			httpStatus = http.StatusNotFound
+		} else if errors.As(err, &errBookQuantityZero.Err) {
+			httpStatus = http.StatusBadRequest
+		}
+		c.AbortWithStatusJSON(httpStatus, resp)
 		return
 	}
 
@@ -48,6 +67,33 @@ func (handler *BorrowHandler) CreateBorrowRecord(c *gin.Context) {
 
 // GetAllBorrowsRecord implements interfaces.BorrowHandler.
 func (handler *BorrowHandler) GetAllBorrowsRecord(c *gin.Context) {
+	var search request.SearchBorrow
+	c.ShouldBindQuery(&search)
+
+	val := reflect.ValueOf(&search).Elem()
+	var whereClauses []query.WhereClause
+	for i := 0; i < val.NumField(); i++ {
+		whereClause := &query.WhereClause{
+			Field:     val.Type().Field(i).Name,
+			Value:     fmt.Sprintf("%v", val.Field(i).Interface()),
+			Condition: enums.Equal,
+		}
+		whereClauses = append(whereClauses, *whereClause)
+	}
+
+	borrows, err := handler.usecase.GetAllBorrowsRecord(whereClauses)
+	if err != nil {
+		resp := response.Response{
+			Errors: []string{err.Error()},
+		}
+		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
+		return
+	}
+	resp := response.Response{
+		Message: "Success get borrow record",
+		Data:    borrows,
+	}
+	c.JSON(http.StatusOK, resp)
 }
 
 func NewBorrowHandler(usecase interfaces.BorrowUseCase) *BorrowHandler {

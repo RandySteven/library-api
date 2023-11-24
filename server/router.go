@@ -22,4 +22,5 @@ func (h *Handlers) InitRouter(r *gin.RouterGroup) {
 
 	borrowRouter := r.Group("/borrows")
 	borrowRouter.POST("", h.BorrowHandler.CreateBorrowRecord)
+	borrowRouter.GET("", h.BorrowHandler.GetAllBorrowsRecord)
 }
