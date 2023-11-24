@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"log"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
@@ -16,8 +17,9 @@ type borrowRepository struct {
 }
 
 // ReturnBook implements interfaces.BorrowRepository.
-func (repo *borrowRepository) ReturnBook(borrow *models.Borrow) (*models.Borrow, error) {
+func (repo *borrowRepository) ReturnBookByBorrowId(id uint) (*models.Borrow, error) {
 	tx := repo.db.Begin()
+	var borrow *models.Borrow
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -26,21 +28,26 @@ func (repo *borrowRepository) ReturnBook(borrow *models.Borrow) (*models.Borrow,
 	}()
 
 	err := tx.Model(&models.Borrow{}).
-		Where("id = ? ", borrow.ID).
+		Where("id = ? ", id).
 		Scan(&borrow).Error
-	if err != nil || borrow != nil {
+	log.Println(borrow)
+	if err != nil || borrow == nil {
 		return nil, err
 	}
 
-	err = tx.Model(&models.Book{}).
+	if borrow.BorrowStatus == enums.Returned {
+		return nil, apperror.NewErrBorrowStatusAlreadyReturned()
+	}
+
+	err = tx.Table("books").
 		Where("id = ?", borrow.BookID).
-		Update("quantity", "quantity + 1").Error
+		Update("quantity", gorm.Expr("quantity + ?", 1)).Error
 	if err != nil {
 		return nil, err
 	}
 
-	err = tx.Model(&models.Borrow{}).
-		Where("id = ?", borrow.ID).
+	err = tx.Model(&borrow).
+		Where("id = ?", id).
 		Update("borrow_status", enums.Returned).Error
 	if err != nil {
 		return nil, err

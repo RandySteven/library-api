@@ -19,8 +19,8 @@ VALUES
     ('Manju Man', 'manju.man@shopee.com', '+62012301232');
 
 SELECT * FROM authors;
-SELECT * FROM books;
 SELECT * FROM users;
+SELECT * FROM books;
 SELECT * FROM borrows;
 
 DROP TABLE IF EXISTS borrows;

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
+	"strconv"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
@@ -21,8 +22,29 @@ type BorrowHandler struct {
 }
 
 // ReturnBorrowBook implements interfaces.BorrowHandler.
-func (*BorrowHandler) ReturnBorrowBook(c *gin.Context) {
-	panic("unimplemented")
+func (handler *BorrowHandler) ReturnBorrowBook(c *gin.Context) {
+	id := c.Param("id")
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		resp := response.Response{
+			Errors: []string{err.Error()},
+		}
+		c.AbortWithStatusJSON(http.StatusBadRequest, resp)
+		return
+	}
+	borrow, err := handler.usecase.ReturnBorrowedBookByBorrowId(uint(idInt))
+	if err != nil {
+		resp := response.Response{
+			Errors: []string{err.Error()},
+		}
+		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
+		return
+	}
+	resp := response.Response{
+		Message: "Returned book success",
+		Data:    borrow,
+	}
+	c.JSON(http.StatusOK, resp)
 }
 
 // CreateBorrowRecord implements interfaces.BorrowHandler.

@@ -10,13 +10,13 @@ type (
 	BorrowRepository interface {
 		Save(borrow *models.Borrow) (*models.Borrow, error)
 		Find(whereClauses []query.WhereClause) ([]models.Borrow, error)
-		ReturnBook(borrow *models.Borrow) (*models.Borrow, error)
+		ReturnBookByBorrowId(id uint) (*models.Borrow, error)
 	}
 
 	BorrowUseCase interface {
 		CreateBorrowRecord(borrow *models.Borrow) (*models.Borrow, error)
 		GetAllBorrowsRecord(whereClauses []query.WhereClause) ([]models.Borrow, error)
-		ReturnBorrowedBook(borrow *models.Borrow) (*models.Borrow, error)
+		ReturnBorrowedBookByBorrowId(id uint) (*models.Borrow, error)
 	}
 
 	BorrowHandler interface {

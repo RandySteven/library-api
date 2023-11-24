@@ -24,6 +24,10 @@ type ErrBookQuantityZero struct {
 	Err error
 }
 
+type ErrBorrowStatusAlreadyReturned struct {
+	Err error
+}
+
 func NewErrNoDuplication(resource, field, value string) *ErrNoDuplication {
 	return &ErrNoDuplication{
 		Resource: resource,
@@ -45,6 +49,12 @@ func NewErrBookQuantityZero() *ErrBookQuantityZero {
 	}
 }
 
+func NewErrBorrowStatusAlreadyReturned() *ErrBorrowStatusAlreadyReturned {
+	return &ErrBorrowStatusAlreadyReturned{
+		Err: errors.New("book already returned"),
+	}
+}
+
 func (e *ErrNoDuplication) Error() string {
 	return e.Err.Error()
 }
@@ -54,5 +64,9 @@ func (e *ErrBookIdNotFound) Error() string {
 }
 
 func (e *ErrBookQuantityZero) Error() string {
+	return e.Err.Error()
+}
+
+func (e *ErrBorrowStatusAlreadyReturned) Error() string {
 	return e.Err.Error()
 }

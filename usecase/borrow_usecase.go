@@ -12,8 +12,8 @@ type borrowUseCase struct {
 }
 
 // ReturnBorrowedBook implements interfaces.BorrowUseCase.
-func (usecase *borrowUseCase) ReturnBorrowedBook(borrow *models.Borrow) (*models.Borrow, error) {
-	return usecase.repo.ReturnBook(borrow)
+func (usecase *borrowUseCase) ReturnBorrowedBookByBorrowId(id uint) (*models.Borrow, error) {
+	return usecase.repo.ReturnBookByBorrowId(id)
 }
 
 // CreateBorrowRecord implements interfaces.BorrowUseCase.

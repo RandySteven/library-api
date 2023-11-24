@@ -88,7 +88,7 @@ func (suite *BookHandlerTestSuite) TestGetAllBooks() {
 
 	suite.Run("should return 500 while error in query", func() {
 
-		suite.bookUseCase.On("GetAllBooks", mock.AnythingOfType("*query.WhereClause")).Return(nil, errors.New("Fake error"))
+		suite.bookUseCase.On("GetAllBooks", mock.AnythingOfType("[]query.WhereClause")).Return(nil, errors.New("Fake error"))
 		req, _ := http.NewRequest(http.MethodGet, "/v1/books", nil)
 		w := httptest.NewRecorder()
 
