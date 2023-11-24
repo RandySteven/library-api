@@ -1,38 +1,39 @@
 package apperror
 
-type BadRequest struct {
-	Type int
-	ErrBadRequest
-	ErrNoDuplication
+import "net/http"
+
+const (
+	StatusBadRequest          = http.StatusBadRequest
+	StatusNotFound            = http.StatusNotFound
+	StatusInternalServerError = http.StatusInternalServerError
+)
+
+type CustomErrorMap struct {
+	ErrorMap map[error]int
 }
 
-type NotFound struct {
-	Type int
-	ErrBookIdNotFound
-	ErrUserIdNotFound
+func (custom *CustomErrorMap) InitErrorMap() {
+	initErrors(custom)
+}
+
+func NewCustomErrorMap() *CustomErrorMap {
+	return &CustomErrorMap{
+		ErrorMap: make(map[error]int),
+	}
+}
+
+func initErrors(custom *CustomErrorMap) {
+	// 400 - Bad Request - Errors
+	custom.ErrorMap[errBadRequest] = StatusBadRequest
+	custom.ErrorMap[errNoDuplication] = StatusBadRequest
+
+	// 404 - Not Found - Errors
+	custom.ErrorMap[errBookIdNotFound] = StatusNotFound
+	custom.ErrorMap[errUserIdNotFound] = StatusNotFound
 }
 
 var errBadRequest *ErrBadRequest
 var errNoDuplication *ErrNoDuplication
 var errBookIdNotFound *ErrBookIdNotFound
 var errUserIdNotFound *ErrUserIdNotFound
-
-var badRequests []error
-var notFounds []error
-
-func initErrors() {
-	//400 - Bad Request - Errors
-	badRequests = append(badRequests, errBadRequest)
-	badRequests = append(badRequests, errNoDuplication)
-
-	//404 - Not Found - Errors
-	notFounds = append(notFounds, errBookIdNotFound)
-	notFounds = append(notFounds, errUserIdNotFound)
-}
-
-var responseMap = make(map[int][]error)
-
-func initErrorMap() {
-	responseMap[400] = badRequests
-	responseMap[404] = notFounds
-}
+var errBookQuantityZero *ErrBookQuantityZero

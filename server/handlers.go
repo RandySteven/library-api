@@ -68,20 +68,27 @@ func NewHandlers(repo configs.Repository) (*Handlers, error) {
 func (h Handlers) ErrorMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
-		var errBookIdNotFound *apperror.ErrBookIdNotFound
-		var errBookQuantityZero *apperror.ErrBookQuantityZero
 		var errBadRequest *apperror.ErrBadRequest
+		var errNoDuplication *apperror.ErrNoDuplication
+		var errBookIdNotFound *apperror.ErrBookIdNotFound
+		var errUserIdNotFound *apperror.ErrUserIdNotFound
+		var errBookQuantityZero *apperror.ErrBookQuantityZero
+
 		for _, ginErr := range c.Errors {
 			switch {
-			case errors.Is(ginErr.Err, errBookIdNotFound):
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ginErr.Error()})
-			case errors.Is(ginErr.Err, errBookQuantityZero):
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ginErr.Error()})
-			case errors.Is(ginErr.Err, errBadRequest):
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": ginErr.Error()})
+			case errors.As(ginErr.Err, &errBadRequest):
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": ginErr.Err.Error()})
+			case errors.As(ginErr.Err, &errNoDuplication):
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": ginErr.Err.Error()})
+			case errors.As(ginErr.Err, &errBookIdNotFound):
+				c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"errors": ginErr.Err.Error()})
+			case errors.As(ginErr.Err, &errUserIdNotFound):
+				c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"errors": ginErr.Err.Error()})
+			case errors.As(ginErr.Err, &errBookQuantityZero):
+				c.AbortWithStatusJSON(http.StatusOK, gin.H{"errors": ginErr.Err.Error()})
+			default:
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"errors": ginErr.Err.Error()})
 			}
-
-			c.JSON(http.StatusInternalServerError, gin.H{"errors": ginErr.Error()})
 		}
 	}
 }
