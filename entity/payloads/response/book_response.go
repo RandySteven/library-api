@@ -13,21 +13,28 @@ type BookResponse struct {
 	Description string          `json:"description"`
 	Quantity    uint            `json:"quantity"`
 	Cover       string          `json:"cover"`
-	Author      string          `json:"author,omitempty"`
+	Author      *models.Author  `json:"author,omitempty"`
 	CreatedAt   *time.Time      `json:"created_at,omitempty"`
 	UpdatedAt   *time.Time      `json:"updated_at,omitempty"`
 	DeletedAt   *gorm.DeletedAt `json:"deleted_at,omitempty"`
 }
 
-func NewBookResponse(book *models.Book) *BookResponse {
-	return &BookResponse{
+func NewBookResponse(book *models.Book, withAuthor bool) *BookResponse {
+	bookResponse := &BookResponse{
 		ID:          book.ID,
 		Title:       book.Title,
 		Description: book.Description,
 		Quantity:    book.Quantity,
 		Cover:       book.Cover,
-		Author:      book.Author.Name,
+		CreatedAt:   &book.CreatedAt,
+		UpdatedAt:   &book.UpdatedAt,
+		DeletedAt:   &book.DeletedAt,
 	}
+	if withAuthor {
+		bookResponse.Author = &book.Author
+		return bookResponse
+	}
+	return bookResponse
 }
 
 // func (response *BookResponse) SetAdditionalInfo(book *models.Book) {

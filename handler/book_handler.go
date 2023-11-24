@@ -46,10 +46,7 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusConflict, resp)
 		return
 	}
-	bookResponse := response.NewBookResponse(book)
-	bookResponse.CreatedAt = &book.CreatedAt
-	bookResponse.UpdatedAt = &book.UpdatedAt
-	bookResponse.DeletedAt = &book.DeletedAt
+	bookResponse := response.NewBookResponse(book, false)
 	resp := response.Response{
 		Message: "Success get all books",
 		Data:    bookResponse,
@@ -86,7 +83,7 @@ func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 	}
 	var bookResponses []response.BookResponse
 	for _, book := range books {
-		bookResponse := response.NewBookResponse(&book)
+		bookResponse := response.NewBookResponse(&book, true)
 		bookResponses = append(bookResponses, *bookResponse)
 	}
 	resp := response.Response{
