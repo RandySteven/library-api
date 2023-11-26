@@ -2,6 +2,7 @@ package interfaces
 
 import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
 	"github.com/gin-gonic/gin"
 )
@@ -11,10 +12,11 @@ type (
 		Save(borrow *models.Borrow) (*models.Borrow, error)
 		Find(whereClauses []query.WhereClause) ([]models.Borrow, error)
 		ReturnBookByBorrowId(id uint) (*models.Borrow, error)
+		FindBorrowRecordById(id uint) (*models.Borrow, error)
 	}
 
 	BorrowUseCase interface {
-		CreateBorrowRecord(borrow *models.Borrow) (*models.Borrow, error)
+		CreateBorrowRecord(borrow *models.Borrow) (*response.BorrowResponse, error)
 		GetAllBorrowsRecord(whereClauses []query.WhereClause) ([]models.Borrow, error)
 		ReturnBorrowedBookByBorrowId(id uint) (*models.Borrow, error)
 	}

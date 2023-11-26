@@ -23,6 +23,8 @@ SELECT * FROM users;
 SELECT * FROM books;
 SELECT * FROM borrows;
 
+SELECT * FROM "borrows" WHERE id = 30 
+
 DROP TABLE IF EXISTS borrows;
 DROP TABLE IF EXISTS books;
 DROP TABLE IF EXISTS authors;

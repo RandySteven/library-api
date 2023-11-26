@@ -18,6 +18,21 @@ type borrowRepository struct {
 	db *gorm.DB
 }
 
+// FindBorrowRecordById implements interfaces.BorrowRepository.
+func (repo *borrowRepository) FindBorrowRecordById(id uint) (*models.Borrow, error) {
+	var borrow models.Borrow
+	err := repo.db.Model(&models.Borrow{}).
+		Preload("User").
+		Preload("Book").
+		Where("id = ? ", id).
+		Scan(&borrow).
+		Error
+	if err != nil {
+		return nil, err
+	}
+	return &borrow, nil
+}
+
 // ReturnBook implements interfaces.BorrowRepository.
 func (repo *borrowRepository) ReturnBookByBorrowId(id uint) (*models.Borrow, error) {
 	tx := repo.db.Begin()

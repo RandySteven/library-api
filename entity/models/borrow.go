@@ -16,6 +16,6 @@ type Borrow struct {
 	CreatedAt     time.Time      `gorm:"not null;default:current_timestamp" json:"created_at"`
 	UpdatedAt     time.Time      `gorm:"not null;default:current_timestamp" json:"updated_at"`
 	DeletedAt     gorm.DeletedAt `json:"deleted_at"`
-	User          User           `gorm:"foreignKey:UserID;references:ID"`
-	Book          Book           `gorm:"foreignKey:BookID;references:ID"`
+	User          *User          `gorm:"foreignKey:UserID;references:ID"`
+	Book          *Book          `gorm:"foreignKey:BookID;references:ID"`
 }
