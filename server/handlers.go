@@ -1,9 +1,6 @@
 package server
 
 import (
-	"errors"
-	"net/http"
-
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler"
@@ -54,6 +51,17 @@ func NewHandlers(repo configs.Repository) (*Handlers, error) {
 // 	})
 // }
 
+func (h Handlers) ErrorMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
+
+		for _, ginErr := range c.Errors {
+			apperror.ErrorChecker(c, ginErr.Err)
+			return
+		}
+	}
+}
+
 // func (h Handlers) RoleMiddleware(c *gin.Context) {
 // 	claims := h.validateToken(c)
 // 	if claims == nil {
@@ -64,34 +72,6 @@ func NewHandlers(repo configs.Repository) (*Handlers, error) {
 // 		c.Abort()
 // 		return
 // 	}
-
-func (h Handlers) ErrorMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Next()
-		var errBadRequest *apperror.ErrBadRequest
-		var errNoDuplication *apperror.ErrNoDuplication
-		var errBookIdNotFound *apperror.ErrBookIdNotFound
-		var errUserIdNotFound *apperror.ErrUserIdNotFound
-		var errBookQuantityZero *apperror.ErrBookQuantityZero
-
-		for _, ginErr := range c.Errors {
-			switch {
-			case errors.As(ginErr.Err, &errBadRequest):
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": ginErr.Err.Error()})
-			case errors.As(ginErr.Err, &errNoDuplication):
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": ginErr.Err.Error()})
-			case errors.As(ginErr.Err, &errBookIdNotFound):
-				c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"errors": ginErr.Err.Error()})
-			case errors.As(ginErr.Err, &errUserIdNotFound):
-				c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"errors": ginErr.Err.Error()})
-			case errors.As(ginErr.Err, &errBookQuantityZero):
-				c.AbortWithStatusJSON(http.StatusOK, gin.H{"errors": ginErr.Err.Error()})
-			default:
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"errors": ginErr.Err.Error()})
-			}
-		}
-	}
-}
 
 // 	if claims.User != nil && claims.User.RoleID != 1 {
 // 		resp := response.Response{

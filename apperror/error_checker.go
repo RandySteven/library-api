@@ -1,6 +1,11 @@
 package apperror
 
-import "net/http"
+import (
+	"errors"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
 
 const (
 	StatusBadRequest          = http.StatusBadRequest
@@ -37,3 +42,20 @@ var errNoDuplication *ErrNoDuplication
 var errBookIdNotFound *ErrBookIdNotFound
 var errUserIdNotFound *ErrUserIdNotFound
 var errBookQuantityZero *ErrBookQuantityZero
+
+func ErrorChecker(c *gin.Context, err error) {
+	switch {
+	case errors.As(err, &errBadRequest):
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": err.Error()})
+	case errors.As(err, &errNoDuplication):
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": err.Error()})
+	case errors.As(err, &errBookIdNotFound):
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"errors": err.Error()})
+	case errors.As(err, &errUserIdNotFound):
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"errors": err.Error()})
+	case errors.As(err, &errBookQuantityZero):
+		c.AbortWithStatusJSON(http.StatusOK, gin.H{"errors": err.Error()})
+	default:
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"errors": err.Error()})
+	}
+}

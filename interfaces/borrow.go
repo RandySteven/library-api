@@ -4,15 +4,13 @@ import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type (
 	BorrowRepository interface {
-		Save(borrow *models.Borrow, tx *gorm.DB) (*models.Borrow, error)
+		Save(borrow *models.Borrow) (*models.Borrow, error)
 		Find(whereClauses []query.WhereClause) ([]models.Borrow, error)
 		ReturnBookByBorrowId(id uint) (*models.Borrow, error)
-		GetBorrowTx() *gorm.DB
 	}
 
 	BorrowUseCase interface {

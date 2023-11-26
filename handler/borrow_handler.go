@@ -50,12 +50,6 @@ func (handler *BorrowHandler) CreateBorrowRecord(c *gin.Context) {
 	var request request.BorrowRequest
 	if err := c.ShouldBind(&request); err != nil {
 		c.Error(err)
-		// errorMsg := err.Error()
-		// errors := strings.Split(errorMsg, "\n")
-		// resp := response.Response{
-		// 	Errors: errors,
-		// }
-		// c.AbortWithStatusJSON(http.StatusBadRequest, resp)
 		return
 	}
 
@@ -67,21 +61,6 @@ func (handler *BorrowHandler) CreateBorrowRecord(c *gin.Context) {
 	borrowRecord, err := handler.usecase.CreateBorrowRecord(borrow)
 	if err != nil {
 		c.Error(err)
-		// var errBookIdNotFound *apperror.ErrBookIdNotFound
-		// var errBookQuantityZero *apperror.ErrBookQuantityZero
-		// var errUserIdNotFound *apperror.ErrUserIdNotFound
-		// var httpStatus int
-		// resp := response.Response{
-		// 	Errors: []string{err.Error()},
-		// }
-		// if errors.As(err, &errUserIdNotFound) {
-		// 	httpStatus = http.StatusNotFound
-		// } else if errors.As(err, &errBookIdNotFound) {
-		// 	httpStatus = http.StatusNotFound
-		// } else if errors.As(err, &errBookQuantityZero) {
-		// 	httpStatus = http.StatusBadRequest
-		// }
-		// c.AbortWithStatusJSON(httpStatus, resp)
 		return
 	}
 
@@ -110,10 +89,7 @@ func (handler *BorrowHandler) GetAllBorrowsRecord(c *gin.Context) {
 
 	borrows, err := handler.usecase.GetAllBorrowsRecord(whereClauses)
 	if err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
+		c.Error(err)
 		return
 	}
 	resp := response.Response{

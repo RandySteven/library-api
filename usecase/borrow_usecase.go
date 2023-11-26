@@ -20,10 +20,10 @@ func (usecase *borrowUseCase) ReturnBorrowedBookByBorrowId(id uint) (*models.Bor
 
 // CreateBorrowRecord implements interfaces.BorrowUseCase.
 func (usecase *borrowUseCase) CreateBorrowRecord(borrow *models.Borrow) (*models.Borrow, error) {
-	tx := usecase.repo.GetBorrowTx()
 	borrow.BorrowStatus = enums.Borrowed
 	borrow.BorrowingDate = time.Now()
-	return usecase.repo.Save(borrow, tx)
+
+	return usecase.repo.Save(borrow)
 }
 
 // GetAllBorrowsRecord implements interfaces.BorrowUseCase.

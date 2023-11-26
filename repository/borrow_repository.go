@@ -83,12 +83,10 @@ func (repo *borrowRepository) Find(whereClauses []query.WhereClause) ([]models.B
 
 }
 
-func (repo *borrowRepository) GetBorrowTx() *gorm.DB {
-	return repo.db.Begin()
-}
-
 // Save implements interfaces.BorrowRepository.
-func (repo *borrowRepository) Save(borrow *models.Borrow, tx *gorm.DB) (*models.Borrow, error) {
+func (repo *borrowRepository) Save(borrow *models.Borrow) (*models.Borrow, error) {
+
+	tx := repo.db.Begin()
 
 	defer func() {
 		if r := recover(); r != nil {
