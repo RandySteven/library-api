@@ -42,6 +42,7 @@ var errNoDuplication *ErrNoDuplication
 var errBookIdNotFound *ErrBookIdNotFound
 var errUserIdNotFound *ErrUserIdNotFound
 var errBookQuantityZero *ErrBookQuantityZero
+var errBorrowStatusAlreadyReturned *ErrBorrowStatusAlreadyReturned
 
 func ErrorChecker(c *gin.Context, err error) {
 	switch {
@@ -55,6 +56,8 @@ func ErrorChecker(c *gin.Context, err error) {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"errors": err.Error()})
 	case errors.As(err, &errBookQuantityZero):
 		c.AbortWithStatusJSON(http.StatusOK, gin.H{"errors": err.Error()})
+	case errors.As(err, &errBorrowStatusAlreadyReturned):
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": err.Error()})
 	default:
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"errors": err.Error()})
 	}

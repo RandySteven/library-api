@@ -29,18 +29,12 @@ func (handler *BorrowHandler) ReturnBorrowBook(c *gin.Context) {
 
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		c.AbortWithStatusJSON(http.StatusBadRequest, resp)
+		c.Error(err)
 		return
 	}
 	borrow, err := handler.usecase.ReturnBorrowedBookByBorrowId(ctx, uint(idInt))
 	if err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
+		c.Error(err)
 		return
 	}
 	resp := response.Response{
