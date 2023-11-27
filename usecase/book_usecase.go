@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"context"
+
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
@@ -13,18 +15,18 @@ type bookUseCase struct {
 }
 
 // CreateBook implements interfaces.BookUseCase.
-func (usecase *bookUseCase) CreateBook(book *models.Book) (*models.Book, error) {
-	bookExists, _ := usecase.bookRepo.FindBookByTitle(book.Title)
+func (usecase *bookUseCase) CreateBook(ctx context.Context, book *models.Book) (*models.Book, error) {
+	bookExists, _ := usecase.bookRepo.FindBookByTitle(ctx, book.Title)
 	if bookExists != nil {
 		return nil, apperror.NewErrNoDuplication("books", "title", book.Title).Err
 	}
-	book, err := usecase.bookRepo.Save(book)
+	book, err := usecase.bookRepo.Save(ctx, book)
 	return book, err
 }
 
 // GetAllBooks implements interfaces.BookUseCase.
-func (usecase *bookUseCase) GetAllBooks(whereClauses []query.WhereClause) ([]models.Book, error) {
-	return usecase.bookRepo.Find(whereClauses)
+func (usecase *bookUseCase) GetAllBooks(ctx context.Context, whereClauses []query.WhereClause) ([]models.Book, error) {
+	return usecase.bookRepo.Find(ctx, whereClauses)
 }
 
 func NewBookUseCase(

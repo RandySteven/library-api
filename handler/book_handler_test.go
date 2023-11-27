@@ -12,6 +12,7 @@ import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/mocks"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/server"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -39,12 +40,14 @@ type BookHandlerTestSuite struct {
 	bookUseCase *mocks.BookUseCase
 	bookHandler *handler.BookHandler
 	router      *gin.Engine
+	handler     server.Handlers
 }
 
 func (suite *BookHandlerTestSuite) SetupSubTest() {
 	suite.bookUseCase = mocks.NewBookUseCase(suite.T())
 	suite.bookHandler = handler.NewBookHandler(suite.bookUseCase)
 	suite.router = gin.Default()
+	suite.router.Use(server.ErrorMiddleware())
 }
 
 func (suite *BookHandlerTestSuite) TestGetAllBooks() {

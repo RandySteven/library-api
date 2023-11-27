@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -15,7 +16,7 @@ type bookRepository struct {
 }
 
 // FindBookByTitle implements interfaces.BookRepository.
-func (repo *bookRepository) FindBookByTitle(title string) (*models.Book, error) {
+func (repo *bookRepository) FindBookByTitle(ctx context.Context, title string) (*models.Book, error) {
 	var book *models.Book
 	err := repo.db.Table("books").Where("title = ?", title).Scan(&book).Error
 	log.Println(book)
@@ -26,7 +27,7 @@ func (repo *bookRepository) FindBookByTitle(title string) (*models.Book, error) 
 }
 
 // Save implements interfaces.BookRepository.
-func (repo *bookRepository) Save(book *models.Book) (*models.Book, error) {
+func (repo *bookRepository) Save(ctx context.Context, book *models.Book) (*models.Book, error) {
 	err := repo.db.Create(&book).Error
 	if err != nil {
 		return nil, err
@@ -35,7 +36,7 @@ func (repo *bookRepository) Save(book *models.Book) (*models.Book, error) {
 }
 
 // Find implements interfaces.BookRepository.
-func (repo *bookRepository) Find(whereClauses []query.WhereClause) ([]models.Book, error) {
+func (repo *bookRepository) Find(ctx context.Context, whereClauses []query.WhereClause) ([]models.Book, error) {
 	var books []models.Book
 	table := repo.db.Model(&models.Book{}).
 		Preload("Author")

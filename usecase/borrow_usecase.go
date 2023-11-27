@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"log"
 	"time"
 
@@ -16,21 +17,21 @@ type borrowUseCase struct {
 }
 
 // ReturnBorrowedBook implements interfaces.BorrowUseCase.
-func (usecase *borrowUseCase) ReturnBorrowedBookByBorrowId(id uint) (*models.Borrow, error) {
-	return usecase.repo.ReturnBookByBorrowId(id)
+func (usecase *borrowUseCase) ReturnBorrowedBookByBorrowId(ctx context.Context, id uint) (*models.Borrow, error) {
+	return usecase.repo.ReturnBookByBorrowId(ctx, id)
 }
 
 // CreateBorrowRecord implements interfaces.BorrowUseCase.
-func (usecase *borrowUseCase) CreateBorrowRecord(borrow *models.Borrow) (*response.BorrowResponse, error) {
+func (usecase *borrowUseCase) CreateBorrowRecord(ctx context.Context, borrow *models.Borrow) (*response.BorrowResponse, error) {
 	borrow.BorrowStatus = enums.Borrowed
 	borrow.BorrowingDate = time.Now()
 
-	borrow, err := usecase.repo.Save(borrow)
+	borrow, err := usecase.repo.Save(ctx, borrow)
 	if err != nil {
 		return nil, err
 	}
 
-	borrowRecord, err := usecase.repo.FindBorrowRecordById(borrow.ID)
+	borrowRecord, err := usecase.repo.FindBorrowRecordById(ctx, borrow.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -40,19 +41,21 @@ func (usecase *borrowUseCase) CreateBorrowRecord(borrow *models.Borrow) (*respon
 	borrowResponse := &response.BorrowResponse{
 		ID:           borrowRecord.ID,
 		BorrowStatus: borrowRecord.BorrowStatus,
-		// UserName:     borrowRecord.User.Name,
-		// BookName:     borrowRecord.Book.Title,
-		// BookQuantity: borrowRecord.Book.Quantity,
-		CreatedAt: borrowRecord.CreatedAt,
-		UpdatedAt: borrowRecord.UpdatedAt,
+		UserID:       borrowRecord.UserID,
+		UserName:     borrowRecord.User.Name,
+		BookID:       borrowRecord.BookID,
+		BookName:     borrowRecord.Book.Title,
+		BookQuantity: borrowRecord.Book.Quantity,
+		CreatedAt:    borrowRecord.CreatedAt,
+		UpdatedAt:    borrowRecord.UpdatedAt,
 	}
 
 	return borrowResponse, nil
 }
 
 // GetAllBorrowsRecord implements interfaces.BorrowUseCase.
-func (usecase *borrowUseCase) GetAllBorrowsRecord(whereClauses []query.WhereClause) ([]models.Borrow, error) {
-	return usecase.repo.Find(whereClauses)
+func (usecase *borrowUseCase) GetAllBorrowsRecord(ctx context.Context, whereClauses []query.WhereClause) ([]models.Borrow, error) {
+	return usecase.repo.Find(ctx, whereClauses)
 }
 
 func NewBorrowUseCase(repo interfaces.BorrowRepository) *borrowUseCase {

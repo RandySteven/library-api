@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"reflect"
@@ -13,6 +14,7 @@ import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type BorrowHandler struct {
@@ -22,6 +24,9 @@ type BorrowHandler struct {
 // ReturnBorrowBook implements interfaces.BorrowHandler.
 func (handler *BorrowHandler) ReturnBorrowBook(c *gin.Context) {
 	id := c.Param("id")
+	requestId := uuid.NewString()
+	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
+
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
 		resp := response.Response{
@@ -30,7 +35,7 @@ func (handler *BorrowHandler) ReturnBorrowBook(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, resp)
 		return
 	}
-	borrow, err := handler.usecase.ReturnBorrowedBookByBorrowId(uint(idInt))
+	borrow, err := handler.usecase.ReturnBorrowedBookByBorrowId(ctx, uint(idInt))
 	if err != nil {
 		resp := response.Response{
 			Errors: []string{err.Error()},
@@ -48,6 +53,9 @@ func (handler *BorrowHandler) ReturnBorrowBook(c *gin.Context) {
 // CreateBorrowRecord implements interfaces.BorrowHandler.
 func (handler *BorrowHandler) CreateBorrowRecord(c *gin.Context) {
 	var request request.BorrowRequest
+	requestId := uuid.NewString()
+	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
+
 	if err := c.ShouldBind(&request); err != nil {
 		c.Error(err)
 		return
@@ -58,7 +66,7 @@ func (handler *BorrowHandler) CreateBorrowRecord(c *gin.Context) {
 		BookID: request.BookID,
 	}
 
-	borrowRecord, err := handler.usecase.CreateBorrowRecord(borrow)
+	borrowRecord, err := handler.usecase.CreateBorrowRecord(ctx, borrow)
 	if err != nil {
 		c.Error(err)
 		return
@@ -75,6 +83,8 @@ func (handler *BorrowHandler) CreateBorrowRecord(c *gin.Context) {
 func (handler *BorrowHandler) GetAllBorrowsRecord(c *gin.Context) {
 	var search request.SearchBorrow
 	c.ShouldBindQuery(&search)
+	requestId := uuid.NewString()
+	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
 
 	val := reflect.ValueOf(&search).Elem()
 	var whereClauses []query.WhereClause
@@ -87,7 +97,7 @@ func (handler *BorrowHandler) GetAllBorrowsRecord(c *gin.Context) {
 		whereClauses = append(whereClauses, *whereClause)
 	}
 
-	borrows, err := handler.usecase.GetAllBorrowsRecord(whereClauses)
+	borrows, err := handler.usecase.GetAllBorrowsRecord(ctx, whereClauses)
 	if err != nil {
 		c.Error(err)
 		return

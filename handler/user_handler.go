@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"reflect"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
@@ -12,6 +14,7 @@ import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type UserHandler struct {
@@ -21,14 +24,11 @@ type UserHandler struct {
 // CreateUser implements interfaces.UserHandler.
 func (handler *UserHandler) CreateUser(c *gin.Context) {
 	var request request.UserRequest
+	requestId := uuid.NewString()
+	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
+
 	if err := c.ShouldBind(&request); err != nil {
-		// errorMsg := err.Error()
-		// errors := strings.Split(errorMsg, "\n")
-		// resp := response.Response{
-		// 	Errors: errors,
-		// }
-		// c.AbortWithStatusJSON(http.StatusBadRequest, resp)
-		c.Error(err)
+		c.Error(apperror.NewErrBadRequest(err.Error()))
 		return
 	}
 
@@ -38,7 +38,7 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 		PhoneNumber: request.PhoneNumber,
 	}
 
-	user, err := handler.usecase.CreateUser(user)
+	user, err := handler.usecase.CreateUser(ctx, user)
 	if err != nil {
 		// resp := response.Response{
 		// 	Errors: []string{err.Error()},
@@ -57,6 +57,8 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 // GetAllUsers implements interfaces.UserHandler.
 func (handler *UserHandler) GetAllUsers(c *gin.Context) {
 	var search request.SearchUser
+	requestId := uuid.NewString()
+	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
 	c.ShouldBindQuery(&search)
 
 	val := reflect.ValueOf(&search).Elem()
@@ -70,7 +72,7 @@ func (handler *UserHandler) GetAllUsers(c *gin.Context) {
 		whereClauses = append(whereClauses, *whereClause)
 	}
 
-	users, err := handler.usecase.GetAllUsers(whereClauses)
+	users, err := handler.usecase.GetAllUsers(ctx, whereClauses)
 	if err != nil {
 		resp := response.Response{
 			Errors: []string{err.Error()},

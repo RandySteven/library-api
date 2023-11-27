@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"time"
@@ -19,13 +20,13 @@ type borrowRepository struct {
 }
 
 // FindBorrowRecordById implements interfaces.BorrowRepository.
-func (repo *borrowRepository) FindBorrowRecordById(id uint) (*models.Borrow, error) {
+func (repo *borrowRepository) FindBorrowRecordById(ctx context.Context, id uint) (*models.Borrow, error) {
 	var borrow models.Borrow
 	err := repo.db.Model(&models.Borrow{}).
 		Preload("User").
 		Preload("Book").
 		Where("id = ? ", id).
-		Scan(&borrow).
+		Take(&borrow).
 		Error
 	if err != nil {
 		return nil, err
@@ -34,7 +35,7 @@ func (repo *borrowRepository) FindBorrowRecordById(id uint) (*models.Borrow, err
 }
 
 // ReturnBook implements interfaces.BorrowRepository.
-func (repo *borrowRepository) ReturnBookByBorrowId(id uint) (*models.Borrow, error) {
+func (repo *borrowRepository) ReturnBookByBorrowId(ctx context.Context, id uint) (*models.Borrow, error) {
 	tx := repo.db.Begin()
 	var borrow *models.Borrow
 
@@ -79,7 +80,7 @@ func (repo *borrowRepository) ReturnBookByBorrowId(id uint) (*models.Borrow, err
 }
 
 // Find implements interfaces.BorrowRepository.
-func (repo *borrowRepository) Find(whereClauses []query.WhereClause) ([]models.Borrow, error) {
+func (repo *borrowRepository) Find(ctx context.Context, whereClauses []query.WhereClause) ([]models.Borrow, error) {
 	var borrows []models.Borrow
 	table := repo.db.Model(&models.Borrow{}).Preload("User").Preload("Book")
 	for _, clause := range whereClauses {
@@ -99,7 +100,7 @@ func (repo *borrowRepository) Find(whereClauses []query.WhereClause) ([]models.B
 }
 
 // Save implements interfaces.BorrowRepository.
-func (repo *borrowRepository) Save(borrow *models.Borrow) (*models.Borrow, error) {
+func (repo *borrowRepository) Save(ctx context.Context, borrow *models.Borrow) (*models.Borrow, error) {
 
 	tx := repo.db.Begin()
 

@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	gorm "gorm.io/gorm"
+	context "context"
 
 	mock "github.com/stretchr/testify/mock"
 
@@ -17,13 +17,13 @@ type BorrowRepository struct {
 	mock.Mock
 }
 
-// Find provides a mock function with given fields: whereClauses
-func (_m *BorrowRepository) Find(whereClauses []query.WhereClause) ([]models.Borrow, error) {
-	ret := _m.Called(whereClauses)
+// Find provides a mock function with given fields: ctx, whereClauses
+func (_m *BorrowRepository) Find(ctx context.Context, whereClauses []query.WhereClause) ([]models.Borrow, error) {
+	ret := _m.Called(ctx, whereClauses)
 
 	var r0 []models.Borrow
-	if rf, ok := ret.Get(0).(func([]query.WhereClause) []models.Borrow); ok {
-		r0 = rf(whereClauses)
+	if rf, ok := ret.Get(0).(func(context.Context, []query.WhereClause) []models.Borrow); ok {
+		r0 = rf(ctx, whereClauses)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]models.Borrow)
@@ -31,8 +31,8 @@ func (_m *BorrowRepository) Find(whereClauses []query.WhereClause) ([]models.Bor
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func([]query.WhereClause) error); ok {
-		r1 = rf(whereClauses)
+	if rf, ok := ret.Get(1).(func(context.Context, []query.WhereClause) error); ok {
+		r1 = rf(ctx, whereClauses)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -40,29 +40,13 @@ func (_m *BorrowRepository) Find(whereClauses []query.WhereClause) ([]models.Bor
 	return r0, r1
 }
 
-// GetBorrowTx provides a mock function with given fields:
-func (_m *BorrowRepository) GetBorrowTx() *gorm.DB {
-	ret := _m.Called()
-
-	var r0 *gorm.DB
-	if rf, ok := ret.Get(0).(func() *gorm.DB); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*gorm.DB)
-		}
-	}
-
-	return r0
-}
-
-// ReturnBookByBorrowId provides a mock function with given fields: id
-func (_m *BorrowRepository) ReturnBookByBorrowId(id uint) (*models.Borrow, error) {
-	ret := _m.Called(id)
+// FindBorrowRecordById provides a mock function with given fields: ctx, id
+func (_m *BorrowRepository) FindBorrowRecordById(ctx context.Context, id uint) (*models.Borrow, error) {
+	ret := _m.Called(ctx, id)
 
 	var r0 *models.Borrow
-	if rf, ok := ret.Get(0).(func(uint) *models.Borrow); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) *models.Borrow); ok {
+		r0 = rf(ctx, id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*models.Borrow)
@@ -70,8 +54,8 @@ func (_m *BorrowRepository) ReturnBookByBorrowId(id uint) (*models.Borrow, error
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(context.Context, uint) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -79,13 +63,13 @@ func (_m *BorrowRepository) ReturnBookByBorrowId(id uint) (*models.Borrow, error
 	return r0, r1
 }
 
-// Save provides a mock function with given fields: borrow, tx
-func (_m *BorrowRepository) Save(borrow *models.Borrow, tx *gorm.DB) (*models.Borrow, error) {
-	ret := _m.Called(borrow, tx)
+// ReturnBookByBorrowId provides a mock function with given fields: ctx, id
+func (_m *BorrowRepository) ReturnBookByBorrowId(ctx context.Context, id uint) (*models.Borrow, error) {
+	ret := _m.Called(ctx, id)
 
 	var r0 *models.Borrow
-	if rf, ok := ret.Get(0).(func(*models.Borrow, *gorm.DB) *models.Borrow); ok {
-		r0 = rf(borrow, tx)
+	if rf, ok := ret.Get(0).(func(context.Context, uint) *models.Borrow); ok {
+		r0 = rf(ctx, id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*models.Borrow)
@@ -93,8 +77,31 @@ func (_m *BorrowRepository) Save(borrow *models.Borrow, tx *gorm.DB) (*models.Bo
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*models.Borrow, *gorm.DB) error); ok {
-		r1 = rf(borrow, tx)
+	if rf, ok := ret.Get(1).(func(context.Context, uint) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Save provides a mock function with given fields: ctx, borrow
+func (_m *BorrowRepository) Save(ctx context.Context, borrow *models.Borrow) (*models.Borrow, error) {
+	ret := _m.Called(ctx, borrow)
+
+	var r0 *models.Borrow
+	if rf, ok := ret.Get(0).(func(context.Context, *models.Borrow) *models.Borrow); ok {
+		r0 = rf(ctx, borrow)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.Borrow)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *models.Borrow) error); ok {
+		r1 = rf(ctx, borrow)
 	} else {
 		r1 = ret.Error(1)
 	}

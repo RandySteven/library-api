@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"reflect"
@@ -13,6 +14,7 @@ import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type BookHandler struct {
@@ -22,6 +24,9 @@ type BookHandler struct {
 // CreateBook implements interfaces.BookHandler.
 func (handler *BookHandler) CreateBook(c *gin.Context) {
 	var request request.BookRequest
+	requestId := uuid.NewString()
+	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
+
 	if err := c.ShouldBind(&request); err != nil {
 		c.Error(apperror.NewErrBadRequest(err.Error()))
 		return
@@ -36,7 +41,7 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 		AuthorID:    request.AuthorID,
 	}
 
-	book, err := handler.usecase.CreateBook(book)
+	book, err := handler.usecase.CreateBook(ctx, book)
 	if err != nil {
 		// resp := response.Response{
 		// 	Errors: []string{err.Error()},
@@ -57,6 +62,9 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 // GetAllBooks implements interfaces.BookHandler.
 func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 	var search request.SearchBook
+	requestId := uuid.NewString()
+	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
+
 	if err := c.ShouldBindQuery(&search); err != nil {
 		// c.AbortWithStatusJSON(http.StatusNotFound, "URL not found")
 		c.Error(err)
@@ -74,7 +82,7 @@ func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 		whereClauses = append(whereClauses, *whereClause)
 	}
 
-	books, err := handler.usecase.GetAllBooks(whereClauses)
+	books, err := handler.usecase.GetAllBooks(ctx, whereClauses)
 	if err != nil {
 		// resp := response.Response{
 		// 	Errors: []string{err.Error()},

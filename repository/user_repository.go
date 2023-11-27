@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
@@ -14,7 +15,7 @@ type userRepository struct {
 }
 
 // Find implements interfaces.UserRepository.
-func (repo *userRepository) Find(whereClause []query.WhereClause) ([]models.User, error) {
+func (repo *userRepository) Find(ctx context.Context, whereClause []query.WhereClause) ([]models.User, error) {
 	var users []models.User
 	table := repo.db.Model(&models.User{})
 	for _, clause := range whereClause {
@@ -33,7 +34,7 @@ func (repo *userRepository) Find(whereClause []query.WhereClause) ([]models.User
 }
 
 // Save implements interfaces.UserRepository.
-func (repo *userRepository) Save(user *models.User) (*models.User, error) {
+func (repo *userRepository) Save(ctx context.Context, user *models.User) (*models.User, error) {
 	err := repo.db.Create(&user).Error
 	if err != nil {
 		return nil, err

@@ -51,7 +51,7 @@ func NewHandlers(repo configs.Repository) (*Handlers, error) {
 // 	})
 // }
 
-func (h Handlers) ErrorMiddleware() gin.HandlerFunc {
+func ErrorMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
 
