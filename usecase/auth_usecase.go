@@ -25,7 +25,7 @@ func (service *authUseCase) LoginUserByEmail(email string, password string) (str
 	// if err != nil {
 	// 	return "", err
 	// }
-	expTime := time.Now().Add(time.Minute * 60)
+	expTime := time.Now().Add(time.Minute * 15)
 	claims := &configs.JWTClaim{
 		UserLogin: *response.NewUserLogin(user),
 		RegisteredClaims: jwt.RegisteredClaims{
