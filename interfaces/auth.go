@@ -13,12 +13,12 @@ type (
 	}
 
 	AuthRepository interface {
-		LoginUserByEmail(email string) (*models.User, error)
+		GetUserByEmail(email string) (*models.User, error)
 		RegisterUser(user *models.User) (*models.User, error)
 	}
 
 	AuthUseCase interface {
-		LoginUserByEmail(email string) (*models.User, error)
+		LoginUserByEmail(email string, password string) (string, error)
 		RegisterUser(user *models.User) (*models.User, error)
 	}
 )

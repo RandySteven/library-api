@@ -2,16 +2,13 @@ package handler
 
 import (
 	"net/http"
-	"time"
 
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 type AuthHandler struct {
@@ -60,7 +57,7 @@ func (h *AuthHandler) LoginUser(c *gin.Context) {
 		return
 	}
 
-	user, err := h.usecase.LoginUserByEmail(request.Email)
+	token, err := h.usecase.LoginUserByEmail(request.Email, request.Password)
 	if err != nil {
 		resp := response.Response{
 			Errors: []string{err.Error()},
@@ -69,23 +66,9 @@ func (h *AuthHandler) LoginUser(c *gin.Context) {
 		return
 	}
 
-	expTime := time.Now().Add(time.Minute * 60)
-	claims := &configs.JWTClaim{
-		User: user,
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "go-jwt-mux",
-			ExpiresAt: jwt.NewNumericDate(expTime),
-		},
-	}
-	tokenAlgo := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := tokenAlgo.SignedString(configs.JWT_KEY)
-	if err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		utils.ResponseHandler(c.Writer, http.StatusInternalServerError, resp)
-		return
-	}
+	c.Request.Header.Set("Token", token)
+	client := &http.Client{}
+	client.Do(c.Request)
 
 	http.SetCookie(c.Writer, &http.Cookie{
 		Name:     "token",
@@ -96,7 +79,7 @@ func (h *AuthHandler) LoginUser(c *gin.Context) {
 
 	resp := response.Response{
 		Message: "Success login user",
-		Data:    user,
+		Data:    token,
 	}
 	c.JSON(http.StatusOK, resp)
 }
@@ -123,9 +106,10 @@ func (h *AuthHandler) RegisterUser(c *gin.Context) {
 	}
 
 	user := &models.User{
-		Name:     register.Name,
-		Email:    register.Email,
-		Password: register.Password,
+		Name:        register.Name,
+		Email:       register.Email,
+		Password:    register.Password,
+		PhoneNumber: register.PhoneNumber,
 	}
 
 	pass, err := utils.HashPassword(user.Password)

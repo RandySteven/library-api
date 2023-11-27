@@ -10,6 +10,7 @@ type Usecase struct {
 	interfaces.AuthorUseCase
 	interfaces.UserUseCase
 	interfaces.BorrowUseCase
+	interfaces.AuthUseCase
 }
 
 func NewUsecase(repo configs.Repository) *Usecase {
@@ -18,5 +19,6 @@ func NewUsecase(repo configs.Repository) *Usecase {
 		AuthorUseCase: NewAuthorUseCase(repo.AuthorRepository),
 		UserUseCase:   NewUserUseCase(repo.UserRepository),
 		BorrowUseCase: NewBorrowUseCase(repo.BorrowRepository),
+		AuthUseCase:   NewAuthUseCase(repo.AuthRepository),
 	}
 }

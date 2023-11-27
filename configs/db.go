@@ -18,6 +18,7 @@ type Repository struct {
 	BookRepository   interfaces.BookRepository
 	BorrowRepository interfaces.BorrowRepository
 	UserRepository   interfaces.UserRepository
+	AuthRepository   interfaces.AuthRepository
 	db               *gorm.DB
 }
 
@@ -43,6 +44,7 @@ func NewRepository(config *models.Config) (*Repository, error) {
 		BookRepository:   repository.NewBookRepository(db),
 		UserRepository:   repository.NewUserRepository(db),
 		BorrowRepository: repository.NewBorrowRepository(db),
+		AuthRepository:   repository.NewAuthRepository(db),
 		db:               db,
 	}, nil
 }

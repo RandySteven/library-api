@@ -19,7 +19,7 @@ func (repo *authRepository) RegisterUser(user *models.User) (*models.User, error
 }
 
 // LoginUserByEmail implements interfaces.AuthRepository.
-func (repo *authRepository) LoginUserByEmail(email string) (*models.User, error) {
+func (repo *authRepository) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	if err := repo.db.Where("email = ?", email).First(&user).Error; err != nil {
 		return nil, err

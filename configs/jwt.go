@@ -1,13 +1,14 @@
 package configs
 
 import (
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
+	"os"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var JWT_KEY = []byte("cCM7rrsrmle6")
+var JWT_KEY = []byte(os.Getenv("JWT_TOKEN"))
 
 type JWTClaim struct {
-	User *models.User
+	UserId uint
 	jwt.RegisteredClaims
 }

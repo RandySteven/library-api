@@ -7,7 +7,7 @@ import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func validateToken(c *gin.Context) *configs.JWTClaim {
@@ -40,6 +40,6 @@ func AuthMiddleware(c *gin.Context) {
 		return
 	}
 
-	c.Set("user", claims.User)
+	c.Set("user-id", claims.UserId)
 	c.Next()
 }

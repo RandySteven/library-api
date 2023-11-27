@@ -17,6 +17,9 @@ func main() {
 	handlers := InitHandlers()
 
 	v1 := r.Group("/v1")
+	v1.POST("/login", handlers.AuthHandler.LoginUser)
+	v1.POST("/register", handlers.AuthHandler.RegisterUser)
+	v1.POST("/logout", handlers.AuthHandler.LogoutUser)
 	handlers.InitRouter(v1)
 
 	srv := http.Server{
