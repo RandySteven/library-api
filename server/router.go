@@ -23,6 +23,7 @@ func (h *Handlers) InitRouter(r *gin.RouterGroup) {
 	// userRouter.HandleFunc("/{id}", h.UserHandler.GetUserById).Methods(http.MethodGet)
 
 	borrowRouter := r.Group("/borrowing-records")
+	borrowRouter.Use(middleware.AuthMiddleware)
 	borrowRouter.POST("", middleware.ErrorMiddleware(), h.BorrowHandler.CreateBorrowRecord)
 	borrowRouter.GET("", middleware.ErrorMiddleware(), h.BorrowHandler.GetAllBorrowsRecord)
 	borrowRouter.PUT("/:id", middleware.ErrorMiddleware(), h.BorrowHandler.ReturnBorrowBook)

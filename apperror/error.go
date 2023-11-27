@@ -40,6 +40,14 @@ type ErrUnauthorized struct {
 	Err error
 }
 
+type ErrBorrowRecordNotFound struct {
+	Err error
+}
+
+type ErrPermissionDenied struct {
+	Err error
+}
+
 func NewErrNoDuplication(resource, field, value string) *ErrNoDuplication {
 	return &ErrNoDuplication{
 		Resource: resource,
@@ -85,6 +93,18 @@ func NewErrUnauthorized() *ErrUnauthorized {
 	}
 }
 
+func NewErrBorrowRecordNotFound() *ErrBorrowRecordNotFound {
+	return &ErrBorrowRecordNotFound{
+		Err: errors.New("borrow record not found"),
+	}
+}
+
+func NewErrPermissionDenied() *ErrPermissionDenied {
+	return &ErrPermissionDenied{
+		Err: errors.New("permission denied"),
+	}
+}
+
 func (e *ErrNoDuplication) Error() string {
 	return e.Err.Error()
 }
@@ -110,5 +130,13 @@ func (e *ErrBadRequest) Error() string {
 }
 
 func (e *ErrUnauthorized) Error() string {
+	return e.Err.Error()
+}
+
+func (e *ErrBorrowRecordNotFound) Error() string {
+	return e.Err.Error()
+}
+
+func (e *ErrPermissionDenied) Error() string {
 	return e.Err.Error()
 }

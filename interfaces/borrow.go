@@ -20,7 +20,7 @@ type (
 	BorrowUseCase interface {
 		CreateBorrowRecord(ctx context.Context, borrow *models.Borrow) (*response.BorrowResponse, error)
 		GetAllBorrowsRecord(ctx context.Context, whereClauses []query.WhereClause) ([]models.Borrow, error)
-		ReturnBorrowedBookByBorrowId(ctx context.Context, id uint) (*models.Borrow, error)
+		ReturnBorrowedBookByBorrowId(ctx context.Context, borrowId uint, userId uint) (*models.Borrow, error)
 	}
 
 	BorrowHandler interface {

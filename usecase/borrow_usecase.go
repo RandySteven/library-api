@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/enums"
@@ -17,8 +18,15 @@ type borrowUseCase struct {
 }
 
 // ReturnBorrowedBook implements interfaces.BorrowUseCase.
-func (usecase *borrowUseCase) ReturnBorrowedBookByBorrowId(ctx context.Context, id uint) (*models.Borrow, error) {
-	return usecase.repo.ReturnBookByBorrowId(ctx, id)
+func (usecase *borrowUseCase) ReturnBorrowedBookByBorrowId(ctx context.Context, borrowId uint, userId uint) (*models.Borrow, error) {
+	borrow, err := usecase.repo.FindBorrowRecordById(ctx, borrowId)
+	if err != nil {
+		return nil, apperror.NewErrBorrowRecordNotFound().Err
+	}
+	if borrow.UserID != userId {
+		return nil, apperror.NewErrPermissionDenied().Err
+	}
+	return usecase.repo.ReturnBookByBorrowId(ctx, borrowId)
 }
 
 // CreateBorrowRecord implements interfaces.BorrowUseCase.

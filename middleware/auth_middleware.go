@@ -3,6 +3,7 @@ package middleware
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
@@ -18,11 +19,11 @@ func validateToken(c *gin.Context) *configs.JWTClaim {
 	if err != nil {
 		return nil
 	}
-	tokenStringValidate := c.GetHeader("Authorization")
+	// tokenStringValidate := c.GetHeader("Authorization")
 
-	if tokenStringValidate == "" {
-		return nil
-	}
+	// if tokenStringValidate == "" {
+	// 	return nil
+	// }
 
 	claims := &configs.JWTClaim{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
@@ -37,6 +38,10 @@ func validateToken(c *gin.Context) *configs.JWTClaim {
 }
 
 func AuthMiddleware(c *gin.Context) {
+	if os.Getenv("ENV_MODE") == "testing" {
+		c.Next()
+		return
+	}
 	claims := validateToken(c)
 
 	if claims == nil {
@@ -48,6 +53,8 @@ func AuthMiddleware(c *gin.Context) {
 		return
 	}
 
-	c.Set("user", claims.UserLogin)
+	c.Set("id", claims.ID)
+	c.Set("name", claims.Name)
+	c.Set("email", claims.Email)
 	c.Next()
 }

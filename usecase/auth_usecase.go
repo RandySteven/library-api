@@ -6,7 +6,6 @@ import (
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -28,7 +27,9 @@ func (service *authUseCase) LoginUserByEmail(ctx context.Context, email string, 
 	// }
 	expTime := time.Now().Add(time.Minute * 15)
 	claims := &configs.JWTClaim{
-		UserLogin: *response.NewUserLogin(user),
+		ID:    user.ID,
+		Name:  user.Name,
+		Email: user.Email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "issuer",
 			ExpiresAt: jwt.NewNumericDate(expTime),

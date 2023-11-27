@@ -26,13 +26,15 @@ func (handler *BorrowHandler) ReturnBorrowBook(c *gin.Context) {
 	id := c.Param("id")
 	requestId := uuid.NewString()
 	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
+	val, _ := c.Get("id")
+	userId, _ := val.(uint)
 
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
 		c.Error(err)
 		return
 	}
-	borrow, err := handler.usecase.ReturnBorrowedBookByBorrowId(ctx, uint(idInt))
+	borrow, err := handler.usecase.ReturnBorrowedBookByBorrowId(ctx, uint(idInt), userId)
 	if err != nil {
 		c.Error(err)
 		return
@@ -55,8 +57,11 @@ func (handler *BorrowHandler) CreateBorrowRecord(c *gin.Context) {
 		return
 	}
 
+	val, _ := c.Get("id")
+	userId, _ := val.(uint)
+
 	borrow := &models.Borrow{
-		UserID: request.UserID,
+		UserID: userId,
 		BookID: request.BookID,
 	}
 

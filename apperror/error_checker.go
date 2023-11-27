@@ -44,6 +44,8 @@ var errUserIdNotFound *ErrUserIdNotFound
 var errBookQuantityZero *ErrBookQuantityZero
 var errBorrowStatusAlreadyReturned *ErrBorrowStatusAlreadyReturned
 var errUnauthorized *ErrUnauthorized
+var errBorrowRecordNotFound *ErrBorrowRecordNotFound
+var errPermissionDenied *ErrPermissionDenied
 
 func ErrorChecker(c *gin.Context, err error) {
 	switch {
@@ -61,6 +63,10 @@ func ErrorChecker(c *gin.Context, err error) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": err.Error()})
 	case errors.As(err, &errUnauthorized):
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"errors": err.Error()})
+	case errors.As(err, &errBorrowRecordNotFound):
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"errors": err.Error()})
+	case errors.As(err, &errPermissionDenied):
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"errors": err.Error()})
 	default:
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"errors": err.Error()})
 	}

@@ -65,13 +65,13 @@ func (_m *BorrowUseCase) GetAllBorrowsRecord(ctx context.Context, whereClauses [
 	return r0, r1
 }
 
-// ReturnBorrowedBookByBorrowId provides a mock function with given fields: ctx, id
-func (_m *BorrowUseCase) ReturnBorrowedBookByBorrowId(ctx context.Context, id uint) (*models.Borrow, error) {
-	ret := _m.Called(ctx, id)
+// ReturnBorrowedBookByBorrowId provides a mock function with given fields: ctx, borrowId, userId
+func (_m *BorrowUseCase) ReturnBorrowedBookByBorrowId(ctx context.Context, borrowId uint, userId uint) (*models.Borrow, error) {
+	ret := _m.Called(ctx, borrowId, userId)
 
 	var r0 *models.Borrow
-	if rf, ok := ret.Get(0).(func(context.Context, uint) *models.Borrow); ok {
-		r0 = rf(ctx, id)
+	if rf, ok := ret.Get(0).(func(context.Context, uint, uint) *models.Borrow); ok {
+		r0 = rf(ctx, borrowId, userId)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*models.Borrow)
@@ -79,8 +79,8 @@ func (_m *BorrowUseCase) ReturnBorrowedBookByBorrowId(ctx context.Context, id ui
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, uint) error); ok {
-		r1 = rf(ctx, id)
+	if rf, ok := ret.Get(1).(func(context.Context, uint, uint) error); ok {
+		r1 = rf(ctx, borrowId, userId)
 	} else {
 		r1 = ret.Error(1)
 	}
