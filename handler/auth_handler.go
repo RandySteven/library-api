@@ -66,10 +66,6 @@ func (h *AuthHandler) LoginUser(c *gin.Context) {
 		return
 	}
 
-	c.Request.Header.Set("Token", token)
-	client := &http.Client{}
-	client.Do(c.Request)
-
 	http.SetCookie(c.Writer, &http.Cookie{
 		Name:     "token",
 		Path:     "/",

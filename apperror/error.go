@@ -36,6 +36,10 @@ type ErrBadRequest struct {
 	Err error
 }
 
+type ErrUnauthorized struct {
+	Err error
+}
+
 func NewErrNoDuplication(resource, field, value string) *ErrNoDuplication {
 	return &ErrNoDuplication{
 		Resource: resource,
@@ -75,6 +79,12 @@ func NewErrUserIdNotFound() *ErrUserIdNotFound {
 	}
 }
 
+func NewErrUnauthorized() *ErrUnauthorized {
+	return &ErrUnauthorized{
+		Err: errors.New("unauthorized user"),
+	}
+}
+
 func (e *ErrNoDuplication) Error() string {
 	return e.Err.Error()
 }
@@ -96,5 +106,9 @@ func (e *ErrUserIdNotFound) Error() string {
 }
 
 func (e *ErrBadRequest) Error() string {
+	return e.Err.Error()
+}
+
+func (e *ErrUnauthorized) Error() string {
 	return e.Err.Error()
 }
