@@ -36,47 +36,41 @@ func (repo *borrowRepository) FindBorrowRecordById(ctx context.Context, id uint)
 
 // ReturnBook implements interfaces.BorrowRepository.
 func (repo *borrowRepository) ReturnBookByBorrowId(ctx context.Context, id uint) (*models.Borrow, error) {
-	tx := repo.db.Begin()
 	var borrow *models.Borrow
 
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
+	err := repo.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		err := tx.Model(&models.Borrow{}).
+			Where("id = ? ", id).
+			Scan(&borrow).Error
+		log.Println(borrow)
+		if err != nil || borrow == nil {
+			return err
 		}
-	}()
 
-	err := tx.Model(&models.Borrow{}).
-		Where("id = ? ", id).
-		Scan(&borrow).Error
-	log.Println(borrow)
-	if err != nil || borrow == nil {
-		return nil, err
-	}
+		if borrow.BorrowStatus == enums.Returned {
+			return apperror.NewErrBorrowStatusAlreadyReturned()
+		}
 
-	if borrow.BorrowStatus == enums.Returned {
-		return nil, apperror.NewErrBorrowStatusAlreadyReturned()
-	}
+		err = tx.Table("books").
+			Where("id = ?", borrow.BookID).
+			Update("quantity", gorm.Expr("quantity + ?", 1)).Error
+		if err != nil {
+			return err
+		}
 
-	err = tx.Table("books").
-		Where("id = ?", borrow.BookID).
-		Update("quantity", gorm.Expr("quantity + ?", 1)).Error
-	if err != nil {
-		return nil, err
-	}
+		err = tx.Model(&borrow).
+			Where("id = ?", id).
+			Updates(map[string]interface{}{
+				"borrow_status":  enums.Returned,
+				"returning_date": time.Now(),
+			}).Error
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 
-	err = tx.Model(&borrow).
-		Where("id = ?", id).
-		Updates(map[string]interface{}{
-			"borrow_status":  enums.Returned,
-			"returning_date": time.Now(),
-		}).Error
-	if err != nil {
-		return nil, err
-	}
-
-	tx.Commit()
-
-	return borrow, nil
+	return borrow, err
 }
 
 // Find implements interfaces.BorrowRepository.
@@ -101,50 +95,35 @@ func (repo *borrowRepository) Find(ctx context.Context, whereClauses []query.Whe
 
 // Save implements interfaces.BorrowRepository.
 func (repo *borrowRepository) Save(ctx context.Context, borrow *models.Borrow) (*models.Borrow, error) {
-
-	tx := repo.db.Begin()
-
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
+	err := repo.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		var book *models.Book
+		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Model(&models.Book{}).
+			Where("id = ? ", borrow.BookID).
+			Scan(&book).Error
+		if err != nil || book == nil {
+			return apperror.NewErrBookIdNotFound()
 		}
-	}()
 
-	var user *models.User
-	err := tx.Model(&models.User{}).
-		Where("id = ?", borrow.UserID).
-		Scan(&user).Error
-	if err != nil || user == nil {
-		return nil, apperror.NewErrUserIdNotFound()
-	}
+		if book.Quantity == 0 {
+			return apperror.NewErrBookQuantityZero()
+		}
 
-	var book *models.Book
-	err = tx.Clauses(clause.Locking{Strength: "UPDATE"}).Model(&models.Book{}).
-		Where("id = ? ", borrow.BookID).
-		Scan(&book).Error
-	if err != nil || book == nil {
-		return nil, apperror.NewErrBookIdNotFound()
-	}
+		err = tx.Table("books").
+			Where("id = ?", book.ID).
+			Update("quantity", gorm.Expr("quantity - ?", 1)).
+			Error
 
-	if book.Quantity == 0 {
-		return nil, apperror.NewErrBookQuantityZero()
-	}
+		if err != nil {
+			return err
+		}
 
-	err = tx.Table("books").
-		Where("id = ?", book.ID).
-		Update("quantity", gorm.Expr("quantity - ?", 1)).
-		Error
-
-	if err != nil {
-		return nil, err
-	}
-
-	err = tx.Create(&borrow).Error
-	if err != nil {
-		return nil, err
-	}
-	tx.Commit()
-	return borrow, nil
+		err = tx.Create(&borrow).Error
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	return borrow, err
 }
 
 func NewBorrowRepository(db *gorm.DB) *borrowRepository {
