@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"net/http"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
@@ -9,6 +10,7 @@ import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type AuthHandler struct {
@@ -38,6 +40,8 @@ func (h *AuthHandler) LogoutUser(c *gin.Context) {
 // LoginUser handles the route for logging in a user.
 func (h *AuthHandler) LoginUser(c *gin.Context) {
 	c.Header("Content-Type", "application/json")
+	requestId := uuid.NewString()
+	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
 	var request request.UserLoginRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		resp := response.Response{
@@ -57,7 +61,7 @@ func (h *AuthHandler) LoginUser(c *gin.Context) {
 		return
 	}
 
-	token, err := h.usecase.LoginUserByEmail(request.Email, request.Password)
+	token, err := h.usecase.LoginUserByEmail(ctx, request.Email, request.Password)
 	if err != nil {
 		resp := response.Response{
 			Errors: []string{err.Error()},
@@ -83,6 +87,9 @@ func (h *AuthHandler) LoginUser(c *gin.Context) {
 // RegisterUser handles the route for registering a new user.
 func (h *AuthHandler) RegisterUser(c *gin.Context) {
 	c.Header("Content-Type", "application/json")
+	requestId := uuid.NewString()
+	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
+
 	var register request.UserRequest
 	if err := c.ShouldBindJSON(&register); err != nil {
 		resp := response.Response{
@@ -117,7 +124,7 @@ func (h *AuthHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 	user.Password = pass
-	userStore, err := h.usecase.RegisterUser(user)
+	userStore, err := h.usecase.RegisterUser(ctx, user)
 	if err != nil {
 		resp := response.Response{
 			Errors: []string{err.Error()},

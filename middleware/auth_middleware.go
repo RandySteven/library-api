@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/utils"
@@ -18,7 +19,6 @@ func validateToken(c *gin.Context) *configs.JWTClaim {
 		return nil
 	}
 	tokenStringValidate := c.GetHeader("Authorization")
-	log.Println("authorization : ", tokenStringValidate[len("Bearer "):])
 
 	if tokenStringValidate == "" {
 		return nil
@@ -28,8 +28,6 @@ func validateToken(c *gin.Context) *configs.JWTClaim {
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
 		return configs.JWT_KEY, nil
 	})
-
-	// log.Println("error middleware : ", err)
 
 	if err != nil || !token.Valid {
 		return nil
@@ -43,7 +41,7 @@ func AuthMiddleware(c *gin.Context) {
 
 	if claims == nil {
 		resp := response.Response{
-			Errors: []string{"Unauthorized. Invalid token"},
+			Errors: []string{apperror.NewErrUnauthorized().Error()},
 		}
 		utils.ResponseHandler(c.Writer, http.StatusUnauthorized, resp)
 		c.Abort()

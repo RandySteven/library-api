@@ -26,7 +26,6 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 	var request request.BookRequest
 	requestId := uuid.NewString()
 	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
-
 	if err := c.ShouldBind(&request); err != nil {
 		c.Error(apperror.NewErrBadRequest(err.Error()))
 		return

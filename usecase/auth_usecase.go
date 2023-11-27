@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"time"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
@@ -15,8 +16,8 @@ type authUseCase struct {
 }
 
 // LoginUserByEmail implements interfaces.authUseCase.
-func (service *authUseCase) LoginUserByEmail(email string, password string) (string, error) {
-	user, err := service.repo.GetUserByEmail(email)
+func (service *authUseCase) LoginUserByEmail(ctx context.Context, email string, password string) (string, error) {
+	user, err := service.repo.GetUserByEmail(ctx, email)
 	if err != nil {
 		return "", err
 	}
@@ -39,8 +40,8 @@ func (service *authUseCase) LoginUserByEmail(email string, password string) (str
 }
 
 // RegisterUser implements interfaces.authUseCase.
-func (service *authUseCase) RegisterUser(user *models.User) (*models.User, error) {
-	return service.repo.RegisterUser(user)
+func (service *authUseCase) RegisterUser(ctx context.Context, user *models.User) (*models.User, error) {
+	return service.repo.RegisterUser(ctx, user)
 }
 
 func NewAuthUseCase(repo interfaces.AuthRepository) *authUseCase {

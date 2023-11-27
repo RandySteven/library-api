@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"gorm.io/gorm"
@@ -11,7 +13,7 @@ type authRepository struct {
 }
 
 // RegisterUser implements interfaces.AuthRepository.
-func (repo *authRepository) RegisterUser(user *models.User) (*models.User, error) {
+func (repo *authRepository) RegisterUser(ctx context.Context, user *models.User) (*models.User, error) {
 	if err := repo.db.Create(user).Error; err != nil {
 		return nil, err
 	}
@@ -19,7 +21,7 @@ func (repo *authRepository) RegisterUser(user *models.User) (*models.User, error
 }
 
 // LoginUserByEmail implements interfaces.AuthRepository.
-func (repo *authRepository) GetUserByEmail(email string) (*models.User, error) {
+func (repo *authRepository) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
 	if err := repo.db.Where("email = ?", email).First(&user).Error; err != nil {
 		return nil, err
