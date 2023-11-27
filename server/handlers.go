@@ -1,12 +1,10 @@
 package server
 
 import (
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/usecase"
-	"github.com/gin-gonic/gin"
 )
 
 type (
@@ -50,17 +48,6 @@ func NewHandlers(repo configs.Repository) (*Handlers, error) {
 // 		next.ServeHTTP(res, req)
 // 	})
 // }
-
-func ErrorMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Next()
-
-		for _, ginErr := range c.Errors {
-			apperror.ErrorChecker(c, ginErr.Err)
-			return
-		}
-	}
-}
 
 // func (h Handlers) RoleMiddleware(c *gin.Context) {
 // 	claims := h.validateToken(c)

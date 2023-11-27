@@ -9,8 +9,8 @@ import (
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/middleware"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/mocks"
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/server"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -42,7 +42,7 @@ func (suite *UserHandlerTestSuite) SetupSubTest() {
 	suite.userUseCase = mocks.NewUserUseCase(suite.T())
 	suite.userHandler = handler.NewUserHandler(suite.userUseCase)
 	suite.router = gin.Default()
-	suite.router.Use(server.ErrorMiddleware())
+	suite.router.Use(middleware.ErrorMiddleware())
 }
 
 func TestUserHandler(t *testing.T) {

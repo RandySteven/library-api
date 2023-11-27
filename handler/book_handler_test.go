@@ -11,6 +11,7 @@ import (
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/middleware"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/mocks"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/server"
 	"github.com/gin-gonic/gin"
@@ -47,7 +48,7 @@ func (suite *BookHandlerTestSuite) SetupSubTest() {
 	suite.bookUseCase = mocks.NewBookUseCase(suite.T())
 	suite.bookHandler = handler.NewBookHandler(suite.bookUseCase)
 	suite.router = gin.Default()
-	suite.router.Use(server.ErrorMiddleware())
+	suite.router.Use(middleware.ErrorMiddleware())
 }
 
 func (suite *BookHandlerTestSuite) TestGetAllBooks() {

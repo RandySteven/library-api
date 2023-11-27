@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/middleware"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/mocks"
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/server"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -26,7 +26,7 @@ func (suite *BorrowHandlerTestSuite) Setup() {
 	suite.borrowUseCase = mocks.NewBorrowUseCase(suite.T())
 	suite.borrowHandler = *handler.NewBorrowHandler(suite.borrowUseCase)
 	suite.r = gin.Default()
-	suite.r.Use(server.ErrorMiddleware())
+	suite.r.Use(middleware.ErrorMiddleware())
 }
 
 func TestBorrowHandler(t *testing.T) {
