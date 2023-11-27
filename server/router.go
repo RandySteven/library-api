@@ -8,6 +8,7 @@ import (
 func (h *Handlers) InitRouter(r *gin.RouterGroup) {
 
 	bookRouter := r.Group("/books")
+	bookRouter.Use(middleware.AuthMiddleware)
 	bookRouter.POST("", middleware.ErrorMiddleware(), h.BookHandler.CreateBook)
 	bookRouter.GET("", middleware.ErrorMiddleware(), h.BookHandler.GetAllBooks)
 	// bookRouter.DELETE("/:id", h.BookHandler.DeleteProductById)

@@ -4,8 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/server"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -16,23 +14,7 @@ func main() {
 	}
 	r := gin.Default()
 
-	config := InitConfig()
-
-	repository, err := configs.NewRepository(config)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	err = repository.Automigrate()
-	if err != nil {
-		return
-	}
-
-	handlers, err := server.NewHandlers(*repository)
-	if err != nil {
-		return
-	}
+	handlers := InitHandlers()
 
 	v1 := r.Group("/v1")
 	handlers.InitRouter(v1)

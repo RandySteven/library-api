@@ -84,10 +84,6 @@ func (handler *BookHandler) GetAllBooks(c *gin.Context) {
 
 	books, err := handler.usecase.GetAllBooks(ctx, whereClauses)
 	if err != nil {
-		// resp := response.Response{
-		// 	Errors: []string{err.Error()},
-		// }
-		// c.AbortWithStatusJSON(http.StatusInternalServerError, resp)
 		c.Error(err)
 		return
 	}

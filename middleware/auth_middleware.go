@@ -1,0 +1,45 @@
+package middleware
+
+import (
+	"net/http"
+
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/utils"
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
+)
+
+func validateToken(c *gin.Context) *configs.JWTClaim {
+	tokenString, err := c.Cookie("token")
+	if err != nil {
+		return nil
+	}
+
+	claims := &configs.JWTClaim{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
+		return configs.JWT_KEY, nil
+	})
+
+	if err != nil || !token.Valid {
+		return nil
+	}
+
+	return claims
+}
+
+func AuthMiddleware(c *gin.Context) {
+	claims := validateToken(c)
+
+	if claims == nil {
+		resp := response.Response{
+			Errors: []string{"Unauthorized. Invalid token"},
+		}
+		utils.ResponseHandler(c.Writer, http.StatusUnauthorized, resp)
+		c.Abort()
+		return
+	}
+
+	c.Set("user", claims.User)
+	c.Next()
+}
