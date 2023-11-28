@@ -104,8 +104,6 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 		req, err := http.NewRequest(http.MethodPost, "/v1/users", strings.NewReader(requestBody))
 		suite.NoError(err)
 
-		req.Header.Set("Content-Type", "application/json")
-
 		w := httptest.NewRecorder()
 		ctx, _ := gin.CreateTestContext(w)
 		ctx.Request = req

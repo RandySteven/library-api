@@ -48,6 +48,10 @@ type ErrPermissionDenied struct {
 	Err error
 }
 
+type ErrPasswordTooLong struct {
+	Err error
+}
+
 func NewErrNoDuplication(resource, field, value string) *ErrNoDuplication {
 	return &ErrNoDuplication{
 		Resource: resource,
@@ -105,6 +109,12 @@ func NewErrPermissionDenied() *ErrPermissionDenied {
 	}
 }
 
+func NewErrPasswordTooLong() *ErrPasswordTooLong {
+	return &ErrPasswordTooLong{
+		Err: errors.New("Password too long"),
+	}
+}
+
 func (e *ErrNoDuplication) Error() string {
 	return e.Err.Error()
 }
@@ -138,6 +148,10 @@ func (e *ErrBorrowRecordNotFound) Error() string {
 }
 
 func (e *ErrPermissionDenied) Error() string {
+	return e.Err.Error()
+}
+
+func (e *ErrPasswordTooLong) Error() string {
 	return e.Err.Error()
 }
 

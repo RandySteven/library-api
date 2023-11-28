@@ -29,7 +29,6 @@ func (h *Handlers) InitRouter(r *gin.RouterGroup) {
 	// })
 
 	r.Use(middleware.WithTimeOut)
-	r.Use(middleware.ErrorMiddleware())
 
 	r.GET("/hello", func(ctx *gin.Context) {
 		time.Sleep(time.Second * 5)

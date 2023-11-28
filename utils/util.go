@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -20,7 +21,10 @@ func CheckOldAndNew(old, new string) string {
 
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return string(bytes), err
+	if err != nil {
+		return "", apperror.NewErrPasswordTooLong()
+	}
+	return string(bytes), nil
 }
 
 func Validate(obj any) []string {

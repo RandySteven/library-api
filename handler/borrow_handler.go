@@ -76,7 +76,7 @@ func (handler *BorrowHandler) CreateBorrowRecord(c *gin.Context) {
 		Message: "Success add borrow record",
 		Data:    borrowRecord,
 	}
-	c.JSON(http.StatusOK, resp)
+	c.JSON(http.StatusCreated, resp)
 }
 
 // GetAllBorrowsRecord implements interfaces.BorrowHandler.

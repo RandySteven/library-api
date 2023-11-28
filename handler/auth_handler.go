@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
@@ -44,29 +45,20 @@ func (h *AuthHandler) LoginUser(c *gin.Context) {
 	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
 	var request request.UserLoginRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		utils.ResponseHandler(c.Writer, http.StatusInternalServerError, resp)
+		c.Error(err)
 		return
 	}
 
 	pass, err := utils.HashPassword(request.Password)
 	request.Password = pass
 	if err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		utils.ResponseHandler(c.Writer, http.StatusInternalServerError, resp)
+		c.Error(apperror.NewErrPasswordTooLong())
 		return
 	}
 
 	token, err := h.usecase.LoginUserByEmail(ctx, request.Email, request.Password)
 	if err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		utils.ResponseHandler(c.Writer, http.StatusInternalServerError, resp)
+		c.Error(err)
 		return
 	}
 
@@ -92,19 +84,7 @@ func (h *AuthHandler) RegisterUser(c *gin.Context) {
 
 	var register request.UserRequest
 	if err := c.ShouldBindJSON(&register); err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		utils.ResponseHandler(c.Writer, http.StatusInternalServerError, resp)
-		return
-	}
-
-	validationErr := utils.Validate(register)
-	if validationErr != nil {
-		resp := response.Response{
-			Errors: validationErr,
-		}
-		utils.ResponseHandler(c.Writer, http.StatusInternalServerError, resp)
+		c.Error(err)
 		return
 	}
 
@@ -117,26 +97,20 @@ func (h *AuthHandler) RegisterUser(c *gin.Context) {
 
 	pass, err := utils.HashPassword(user.Password)
 	if err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		utils.ResponseHandler(c.Writer, http.StatusInternalServerError, resp)
+		c.Error(apperror.NewErrPasswordTooLong())
 		return
 	}
 	user.Password = pass
 	userStore, err := h.usecase.RegisterUser(ctx, user)
 	if err != nil {
-		resp := response.Response{
-			Errors: []string{err.Error()},
-		}
-		utils.ResponseHandler(c.Writer, http.StatusInternalServerError, resp)
+		c.Error(err)
 		return
 	}
 	resp := response.Response{
 		Message: "Success created user",
 		Data:    userStore,
 	}
-	c.JSON(http.StatusOK, resp)
+	c.JSON(http.StatusCreated, resp)
 }
 
 var _ interfaces.AuthHandler = &AuthHandler{}

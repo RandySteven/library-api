@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -22,6 +23,7 @@ func main() {
 
 	handlers := InitHandlers()
 
+	r.Use(middleware.ErrorMiddleware())
 	v1 := r.Group("/v1")
 	v1.POST("/login", handlers.AuthHandler.LoginUser)
 	v1.POST("/register", handlers.AuthHandler.RegisterUser)

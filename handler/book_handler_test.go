@@ -182,15 +182,13 @@ func (suite *BookHandlerTestSuite) TestCreate() {
 
 		suite.bookUseCase.On("CreateBook", mock.Anything, mock.Anything).Return(nil, errors.New("mock error"))
 
-		req, err := http.NewRequest(http.MethodPost, "/v1/books", strings.NewReader(requestBody))
-		suite.NoError(err)
+		req, _ := http.NewRequest(http.MethodPost, "/v1/books", strings.NewReader(requestBody))
 
 		w := httptest.NewRecorder()
 
 		ctx, _ := gin.CreateTestContext(w)
 		ctx.Request = req
 
-		suite.router.POST("/v1/books", suite.bookHandler.CreateBook)
 		suite.router.ServeHTTP(w, req)
 
 		suite.Equal(http.StatusInternalServerError, w.Code)
