@@ -18,7 +18,7 @@ type bookRepository struct {
 // FindBookByTitle implements interfaces.BookRepository.
 func (repo *bookRepository) FindBookByTitle(ctx context.Context, title string) (*models.Book, error) {
 	var book *models.Book
-	err := repo.db.Table("books").Where("title = ?", title).Scan(&book).Error
+	err := repo.db.WithContext(ctx).Table("books").Where("title = ?", title).Scan(&book).Error
 	log.Println(book)
 	if err != nil {
 		return nil, err
@@ -28,7 +28,7 @@ func (repo *bookRepository) FindBookByTitle(ctx context.Context, title string) (
 
 // Save implements interfaces.BookRepository.
 func (repo *bookRepository) Save(ctx context.Context, book *models.Book) (*models.Book, error) {
-	err := repo.db.Create(&book).Error
+	err := repo.db.WithContext(ctx).Create(&book).Error
 	if err != nil {
 		return nil, err
 	}
@@ -38,10 +38,7 @@ func (repo *bookRepository) Save(ctx context.Context, book *models.Book) (*model
 // Find implements interfaces.BookRepository.
 func (repo *bookRepository) Find(ctx context.Context, whereClauses []query.WhereClause) ([]models.Book, error) {
 	var books []models.Book
-	err := repo.db.WithContext(ctx).Exec("select pg_sleep(4)").Error
-	if err != nil {
-		return nil, err
-	}
+	// repo.db.WithContext(ctx).Exec("SELECT pg_sleep(4)")
 	table := repo.db.WithContext(ctx).Model(&models.Book{}).
 		Preload("Author")
 	for _, clause := range whereClauses {
@@ -52,7 +49,7 @@ func (repo *bookRepository) Find(ctx context.Context, whereClauses []query.Where
 
 	}
 
-	err = table.Find(&books).Error
+	err := table.Find(&books).Error
 	if err != nil {
 		return nil, err
 	}

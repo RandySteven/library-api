@@ -17,7 +17,7 @@ type userRepository struct {
 // Find implements interfaces.UserRepository.
 func (repo *userRepository) Find(ctx context.Context, whereClause []query.WhereClause) ([]models.User, error) {
 	var users []models.User
-	table := repo.db.Model(&models.User{})
+	table := repo.db.WithContext(ctx).Model(&models.User{})
 	for _, clause := range whereClause {
 		query := fmt.Sprintf("%s %s ?", clause.Field, clause.Condition)
 		if len(clause.Value) > 1 {
@@ -35,7 +35,7 @@ func (repo *userRepository) Find(ctx context.Context, whereClause []query.WhereC
 
 // Save implements interfaces.UserRepository.
 func (repo *userRepository) Save(ctx context.Context, user *models.User) (*models.User, error) {
-	err := repo.db.Create(&user).Error
+	err := repo.db.WithContext(ctx).Create(&user).Error
 	if err != nil {
 		return nil, err
 	}

@@ -140,3 +140,8 @@ func (e *ErrBorrowRecordNotFound) Error() string {
 func (e *ErrPermissionDenied) Error() string {
 	return e.Err.Error()
 }
+
+type ErrorWrapper struct {
+	StatusCode    uint
+	StatusMessage string
+}

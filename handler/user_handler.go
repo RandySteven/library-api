@@ -40,10 +40,6 @@ func (handler *UserHandler) CreateUser(c *gin.Context) {
 
 	user, err := handler.usecase.CreateUser(ctx, user)
 	if err != nil {
-		// resp := response.Response{
-		// 	Errors: []string{err.Error()},
-		// }
-		// c.AbortWithStatusJSON(http.StatusConflict, resp)
 		c.Error(err)
 		return
 	}

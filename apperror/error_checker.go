@@ -51,7 +51,7 @@ var errPermissionDenied *ErrPermissionDenied
 func ErrorChecker(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, context.DeadlineExceeded):
-		c.AbortWithStatusJSON(http.StatusGatewayTimeout, gin.H{"errors": err.Error()})
+		c.AbortWithStatusJSON(http.StatusGatewayTimeout, gin.H{"errors": "request timeout"})
 	case errors.As(err, &errBadRequest):
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": err.Error()})
 	case errors.As(err, &errNoDuplication):

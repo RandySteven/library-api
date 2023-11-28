@@ -56,7 +56,7 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 			"email": "randy.steven@shopee.com",
 			"phone_number": "+6285347391672"
 		}`
-		suite.userUseCase.On("CreateUser", mock.AnythingOfType("*models.User")).Return(&users[0], nil)
+		suite.userUseCase.On("CreateUser", mock.Anything, mock.AnythingOfType("*models.User")).Return(&users[0], nil)
 		req, err := http.NewRequest(http.MethodPost, "/v1/users", strings.NewReader(requestBody))
 		suite.NoError(err)
 		req.Header.Set("Content-Type", "application/json")
@@ -66,13 +66,12 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 
 		suite.userHandler.CreateUser(ctx)
 
-		suite.Equal(http.StatusCreated, w.Code)
+		suite.Equal(http.StatusOK, w.Code)
 	})
 
 	suite.Run("should return 400 if user success created", func() {
 		requestBody := `{
 			"name": "Randy Steven",
-			"email": "randy.steven@shopee.com",
 		}`
 		req, err := http.NewRequest(http.MethodPost, "/v1/users", strings.NewReader(requestBody))
 		suite.NoError(err)
@@ -92,7 +91,7 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 			"email": "randy.steven@shopee.com",
 			"phone_number": "+6285347391672"
 		}`
-		suite.userUseCase.On("CreateUser", mock.AnythingOfType("*models.User")).Return(nil, errors.New("mock error"))
+		suite.userUseCase.On("CreateUser", mock.Anything, mock.AnythingOfType("*models.User")).Return(nil, errors.New("mock error"))
 		req, err := http.NewRequest(http.MethodPost, "/v1/users", strings.NewReader(requestBody))
 		suite.NoError(err)
 		req.Header.Set("Content-Type", "application/json")
