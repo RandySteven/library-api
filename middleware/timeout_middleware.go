@@ -13,4 +13,9 @@ func WithTimeOut(c *gin.Context) {
 	defer cancel()
 	c.Request = c.Request.WithContext(ctx)
 	c.Next()
+	// err := c.Request.Context().Err()
+	// if errors.Is(err, context.DeadlineExceeded) {
+	// 	c.AbortWithStatusJSON(http.StatusGatewayTimeout, gin.H{"errors": "request timeout"})
+	// 	return
+	// }
 }

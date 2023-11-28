@@ -38,7 +38,11 @@ func (repo *bookRepository) Save(ctx context.Context, book *models.Book) (*model
 // Find implements interfaces.BookRepository.
 func (repo *bookRepository) Find(ctx context.Context, whereClauses []query.WhereClause) ([]models.Book, error) {
 	var books []models.Book
-	table := repo.db.Model(&models.Book{}).
+	err := repo.db.WithContext(ctx).Exec("select pg_sleep(4)").Error
+	if err != nil {
+		return nil, err
+	}
+	table := repo.db.WithContext(ctx).Model(&models.Book{}).
 		Preload("Author")
 	for _, clause := range whereClauses {
 		query := fmt.Sprintf("%s %s ?", clause.Field, clause.Condition)
@@ -48,7 +52,7 @@ func (repo *bookRepository) Find(ctx context.Context, whereClauses []query.Where
 
 	}
 
-	err := table.Find(&books).Error
+	err = table.Find(&books).Error
 	if err != nil {
 		return nil, err
 	}

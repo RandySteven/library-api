@@ -13,11 +13,13 @@ func ErrorMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
 
+		err := c.Errors.Last()
+		if errors.Is(err, context.DeadlineExceeded) {
+			c.AbortWithStatusJSON(http.StatusGatewayTimeout, gin.H{"errors": err.Error()})
+			return
+		}
+
 		for _, ginErr := range c.Errors {
-			if errors.Is(ginErr, context.DeadlineExceeded) {
-				c.AbortWithStatusJSON(http.StatusGatewayTimeout, gin.H{"errors": ginErr.Err.Error()})
-				return
-			}
 			apperror.ErrorChecker(c, ginErr.Err)
 			return
 		}

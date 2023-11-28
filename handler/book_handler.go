@@ -60,6 +60,12 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 
 // GetAllBooks implements interfaces.BookHandler.
 func (handler *BookHandler) GetAllBooks(c *gin.Context) {
+	// time.Sleep(5 * time.Second)
+	// err := c.Request.Context().Err()
+	// if errors.Is(err, context.DeadlineExceeded) {
+	// 	c.AbortWithStatusJSON(http.StatusGatewayTimeout, gin.H{"errors": "request timeout"})
+	// 	return
+	// }
 	var search request.SearchBook
 	requestId := uuid.NewString()
 	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
