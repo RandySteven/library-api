@@ -38,7 +38,6 @@ func NewRepository(config *models.Config) (*Repository, error) {
 		log.Println("DB error : db.go : ", err)
 		return nil, err
 	}
-	// defer db.Close()
 	return &Repository{
 		AuthorRepository: repository.NewAuthorRepository(db),
 		BookRepository:   repository.NewBookRepository(db),
