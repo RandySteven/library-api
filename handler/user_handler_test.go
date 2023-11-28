@@ -54,33 +54,40 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 		requestBody := `{
 			"name": "Randy Steven",
 			"email": "randy.steven@shopee.com",
-			"phone_number": "+6285347391672"
+			"phone_number": "+6285347391672",
+			"password": "test_1234"
 		}`
 		suite.userUseCase.On("CreateUser", mock.Anything, mock.AnythingOfType("*models.User")).Return(&users[0], nil)
+
 		req, err := http.NewRequest(http.MethodPost, "/v1/users", strings.NewReader(requestBody))
 		suite.NoError(err)
+
 		req.Header.Set("Content-Type", "application/json")
+
 		w := httptest.NewRecorder()
+
 		ctx, _ := gin.CreateTestContext(w)
 		ctx.Request = req
 
 		suite.userHandler.CreateUser(ctx)
 
-		suite.Equal(http.StatusOK, w.Code)
+		suite.Equal(http.StatusCreated, w.Code)
 	})
 
 	suite.Run("should return 400 if user success created", func() {
 		requestBody := `{
 			"name": "Randy Steven",
 		}`
+
 		req, err := http.NewRequest(http.MethodPost, "/v1/users", strings.NewReader(requestBody))
 		suite.NoError(err)
-		req.Header.Set("Content-Type", "application/json")
+
 		w := httptest.NewRecorder()
 		ctx, _ := gin.CreateTestContext(w)
 		ctx.Request = req
 
-		suite.userHandler.CreateUser(ctx)
+		suite.router.POST("/v1/users", suite.userHandler.CreateUser)
+		suite.router.ServeHTTP(w, req)
 
 		suite.Equal(http.StatusBadRequest, w.Code)
 	})
@@ -89,17 +96,22 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 		requestBody := `{
 			"name": "Randy Steven",
 			"email": "randy.steven@shopee.com",
-			"phone_number": "+6285347391672"
+			"phone_number": "+6285347391672",
+			"password": "test_1234"
 		}`
 		suite.userUseCase.On("CreateUser", mock.Anything, mock.AnythingOfType("*models.User")).Return(nil, errors.New("mock error"))
+
 		req, err := http.NewRequest(http.MethodPost, "/v1/users", strings.NewReader(requestBody))
 		suite.NoError(err)
+
 		req.Header.Set("Content-Type", "application/json")
+
 		w := httptest.NewRecorder()
 		ctx, _ := gin.CreateTestContext(w)
 		ctx.Request = req
 
 		suite.userHandler.CreateUser(ctx)
+		suite.router.ServeHTTP(w, req)
 
 		suite.Equal(http.StatusInternalServerError, w.Code)
 	})
@@ -107,38 +119,45 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 
 func (suite *UserHandlerTestSuite) TestGetAllUsers() {
 	suite.Run("should return 200 to get all users", func() {
-		suite.userUseCase.On("GetAllUsers", mock.AnythingOfType("[]query.WhereClause")).Return(users, nil)
+		suite.userUseCase.On("GetAllUsers", mock.Anything, mock.AnythingOfType("[]query.WhereClause")).Return(users, nil)
 		req, err := http.NewRequest(http.MethodGet, "/v1/users", nil)
 		suite.NoError(err)
 		w := httptest.NewRecorder()
+		ctx, _ := gin.CreateTestContext(w)
+		ctx.Request = req
 
-		suite.router.GET("/v1/users", suite.userHandler.GetAllUsers)
+		suite.userHandler.GetAllUsers(ctx)
 		suite.router.ServeHTTP(w, req)
 
 		suite.Equal(http.StatusOK, w.Code)
 	})
 
-	suite.Run("should return 404 even if there is invalid query", func() {
-		r := gin.Default()
+	suite.Run("should return 200 even if there is invalid query", func() {
+		suite.userUseCase.On("GetAllUsers", mock.Anything,
+			mock.AnythingOfType("[]query.WhereClause")).Return(users, nil)
 
-		suite.router.GET("/v1/users", suite.userHandler.GetAllUsers)
 		req, _ := http.NewRequest(http.MethodGet, "/v1/users?invalid=ERR", nil)
 		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = req
 
-		r.ServeHTTP(w, req)
+		suite.userHandler.GetAllUsers(c)
+		suite.router.ServeHTTP(w, req)
 
-		suite.Equal(http.StatusNotFound, w.Code)
+		suite.Equal(http.StatusOK, w.Code)
 
 	})
 
 	suite.Run("should return 500 due error while process query", func() {
-		suite.userUseCase.On("GetAllUsers",
+		suite.userUseCase.On("GetAllUsers", mock.Anything,
 			mock.AnythingOfType("[]query.WhereClause")).
 			Return(nil, errors.New("mock error"))
 		req, _ := http.NewRequest(http.MethodGet, "/v1/users", nil)
 		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = req
 
-		suite.router.GET("/v1/users", suite.userHandler.GetAllUsers)
+		suite.userHandler.GetAllUsers(c)
 		suite.router.ServeHTTP(w, req)
 
 		suite.Equal(http.StatusInternalServerError, w.Code)

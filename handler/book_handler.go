@@ -42,10 +42,6 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 
 	book, err := handler.usecase.CreateBook(ctx, book)
 	if err != nil {
-		// resp := response.Response{
-		// 	Errors: []string{err.Error()},
-		// }
-		// c.AbortWithStatusJSON(http.StatusConflict, resp)
 		c.Error(err)
 		return
 	}
@@ -60,21 +56,11 @@ func (handler *BookHandler) CreateBook(c *gin.Context) {
 
 // GetAllBooks implements interfaces.BookHandler.
 func (handler *BookHandler) GetAllBooks(c *gin.Context) {
-	// time.Sleep(5 * time.Second)
-	// err := c.Request.Context().Err()
-	// if errors.Is(err, context.DeadlineExceeded) {
-	// 	c.AbortWithStatusJSON(http.StatusGatewayTimeout, gin.H{"errors": "request timeout"})
-	// 	return
-	// }
 	var search request.SearchBook
 	requestId := uuid.NewString()
 	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
 
-	if err := c.ShouldBindQuery(&search); err != nil {
-		// c.AbortWithStatusJSON(http.StatusNotFound, "URL not found")
-		c.Error(err)
-		return
-	}
+	c.ShouldBindQuery(&search)
 
 	val := reflect.ValueOf(&search).Elem()
 	var whereClauses []query.WhereClause

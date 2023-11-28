@@ -51,11 +51,13 @@ func (suite *BookHandlerTestSuite) SetupSubTest() {
 
 func (suite *BookHandlerTestSuite) TestGetAllBooks() {
 	suite.Run("should return 200 if get all books success", func() {
-		suite.bookUseCase.On("GetAllBooks", mock.AnythingOfType("[]query.WhereClause")).Return(books, nil)
+		suite.bookUseCase.On("GetAllBooks", mock.Anything, mock.AnythingOfType("[]query.WhereClause")).Return(books, nil)
 		req, _ := http.NewRequest(http.MethodGet, "/v1/books", nil)
 		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = req
 
-		suite.router.GET("/v1/books", suite.bookHandler.GetAllBooks)
+		suite.bookHandler.GetAllBooks(c)
 		suite.router.ServeHTTP(w, req)
 
 		suite.Equal(http.StatusOK, w.Code)
@@ -63,38 +65,46 @@ func (suite *BookHandlerTestSuite) TestGetAllBooks() {
 	})
 
 	suite.Run("should return 200 if get all books success filter by query", func() {
-		r := gin.Default()
 
-		suite.bookUseCase.On("GetAllBooks", mock.AnythingOfType("[]query.WhereClause")).Return(books, nil)
-		req, _ := http.NewRequest(http.MethodGet, "/v1/books", nil)
+		suite.bookUseCase.On("GetAllBooks", mock.Anything, mock.AnythingOfType("[]query.WhereClause")).Return(books, nil)
+		req, _ := http.NewRequest(http.MethodGet, "/v1/books?title=Book Name", nil)
 		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = req
 
-		r.GET("/v1/books", suite.bookHandler.GetAllBooks)
-		r.ServeHTTP(w, req)
+		suite.bookHandler.GetAllBooks(c)
+		suite.router.ServeHTTP(w, req)
 
 		suite.Equal(http.StatusOK, w.Code)
+		suite.NotNil(w.Body)
 	})
 
-	suite.Run("should return 400 invalid query", func() {
-		r := gin.Default()
+	suite.Run("should return 200 event if query param invalid it still get all books", func() {
 
+		suite.bookUseCase.On("GetAllBooks", mock.Anything, mock.AnythingOfType("[]query.WhereClause")).Return(books, nil)
 		suite.router.GET("/v1/books", suite.bookHandler.GetAllBooks)
 		req, _ := http.NewRequest(http.MethodGet, "/v1/books?invalid=ERR", nil)
 		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = req
 
-		r.ServeHTTP(w, req)
+		suite.bookHandler.GetAllBooks(c)
+		suite.router.ServeHTTP(w, req)
 
-		suite.Equal(http.StatusNotFound, w.Code)
+		suite.Equal(http.StatusOK, w.Code)
 
 	})
 
 	suite.Run("should return 500 while error in query", func() {
 
-		suite.bookUseCase.On("GetAllBooks", mock.AnythingOfType("[]query.WhereClause")).Return(nil, errors.New("Fake error"))
+		suite.bookUseCase.On("GetAllBooks", mock.Anything, mock.Anything).Return(nil, errors.New("Fake error"))
+		suite.router.GET("/v1/books", suite.bookHandler.GetAllBooks)
 		req, _ := http.NewRequest(http.MethodGet, "/v1/books", nil)
 		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = req
 
-		suite.router.GET("/v1/books", suite.bookHandler.GetAllBooks)
+		suite.bookHandler.GetAllBooks(c)
 		suite.router.ServeHTTP(w, req)
 
 		suite.Equal(http.StatusInternalServerError, w.Code)
@@ -113,7 +123,7 @@ func (suite *BookHandlerTestSuite) TestCreate() {
 			"author_id": 1
 		}`
 
-		suite.bookUseCase.On("CreateBook", mock.AnythingOfType("*models.Book")).Return(&books[0], nil)
+		suite.bookUseCase.On("CreateBook", mock.Anything, mock.AnythingOfType("*models.Book")).Return(&books[0], nil)
 
 		req, err := http.NewRequest(http.MethodPost, "/v1/books", strings.NewReader(requestBody))
 		suite.NoError(err)
@@ -142,9 +152,37 @@ func (suite *BookHandlerTestSuite) TestCreate() {
 			"author_id": 1
 		}`
 
-		// suite.bookUseCase.On("CreateBook", mock.AnythingOfType("*models.Book")).Return(books[0], nil)
-
 		req, err := http.NewRequest(http.MethodPost, "/v1/books", strings.NewReader(request))
+		suite.NoError(err)
+
+		w := httptest.NewRecorder()
+
+		ctx, _ := gin.CreateTestContext(w)
+		ctx.Request = req
+
+		// suite.bookHandler.CreateBook(ctx)
+
+		suite.router.POST("/v1/books", suite.bookHandler.CreateBook)
+		suite.router.ServeHTTP(w, req)
+
+		suite.Equal(http.StatusBadRequest, w.Code)
+
+		// var resp response.Response
+		// suite.NoError(json.Unmarshal(w.Body.Bytes(), &resp))
+	})
+
+	suite.Run("should return 500 due error in sql", func() {
+		requestBody := `{
+			"title": "Book 3",
+			"description": "Book Description 5",
+			"quantity": 2,
+			"cover": "lalala",
+			"author_id": 2
+		}`
+
+		suite.bookUseCase.On("CreateBook", mock.Anything, mock.Anything).Return(nil, errors.New("mock error"))
+
+		req, err := http.NewRequest(http.MethodPost, "/v1/books", strings.NewReader(requestBody))
 		suite.NoError(err)
 
 		w := httptest.NewRecorder()
@@ -155,10 +193,7 @@ func (suite *BookHandlerTestSuite) TestCreate() {
 		suite.router.POST("/v1/books", suite.bookHandler.CreateBook)
 		suite.router.ServeHTTP(w, req)
 
-		suite.Equal(http.StatusBadRequest, w.Code)
-
-		var resp response.Response
-		suite.NoError(json.Unmarshal(w.Body.Bytes(), &resp))
+		suite.Equal(http.StatusInternalServerError, w.Code)
 
 	})
 }
