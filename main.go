@@ -13,6 +13,7 @@ func main() {
 		log.Println("no env got")
 	}
 	r := gin.Default()
+	r.ContextWithFallback = true
 
 	handlers := InitHandlers()
 
