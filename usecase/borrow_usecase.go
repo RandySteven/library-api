@@ -2,12 +2,10 @@ package usecase
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/enums"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
@@ -30,7 +28,7 @@ func (usecase *borrowUseCase) ReturnBorrowedBookByBorrowId(ctx context.Context, 
 }
 
 // CreateBorrowRecord implements interfaces.BorrowUseCase.
-func (usecase *borrowUseCase) CreateBorrowRecord(ctx context.Context, borrow *models.Borrow) (*response.BorrowResponse, error) {
+func (usecase *borrowUseCase) CreateBorrowRecord(ctx context.Context, borrow *models.Borrow) (*models.Borrow, error) {
 	borrow.BorrowStatus = enums.Borrowed
 	borrow.BorrowingDate = time.Now()
 
@@ -44,21 +42,7 @@ func (usecase *borrowUseCase) CreateBorrowRecord(ctx context.Context, borrow *mo
 		return nil, err
 	}
 
-	log.Println(borrowRecord.User)
-
-	borrowResponse := &response.BorrowResponse{
-		ID:           borrowRecord.ID,
-		BorrowStatus: borrowRecord.BorrowStatus,
-		UserID:       borrowRecord.UserID,
-		UserName:     borrowRecord.User.Name,
-		BookID:       borrowRecord.BookID,
-		BookName:     borrowRecord.Book.Title,
-		BookQuantity: borrowRecord.Book.Quantity,
-		CreatedAt:    borrowRecord.CreatedAt,
-		UpdatedAt:    borrowRecord.UpdatedAt,
-	}
-
-	return borrowResponse, nil
+	return borrowRecord, nil
 }
 
 // GetAllBorrowsRecord implements interfaces.BorrowUseCase.

@@ -156,6 +156,11 @@ func (e *ErrPasswordTooLong) Error() string {
 }
 
 type ErrorWrapper struct {
-	StatusCode    uint
-	StatusMessage string
+	ErrType string
+	Message string
+	Error   error
+}
+
+func NewErrorWrapper(errType string, message string, err error) *ErrorWrapper {
+	return &ErrorWrapper{}
 }

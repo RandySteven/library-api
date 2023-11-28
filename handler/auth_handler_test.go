@@ -1,8 +1,8 @@
 package handler_test
 
 import (
+	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -68,17 +68,23 @@ func (suite *AuthHandlerTestSuite) TestLoginAuth() {
 			"email": "randysteven12@gmail.com",
 			"password": "test_1234test_1234test_1234test_1234test_1234test_1234test_1234test_1234test_1234test_1234"
 		}`
-
+		errJson := `{
+			"errors": "Password too long"
+		}`
+		var expectedErr interface{}
+		json.Unmarshal([]byte(errJson), expectedErr)
 		req, _ := http.NewRequest("POST", "/v1/login", strings.NewReader(requestBody))
 		w := httptest.NewRecorder()
-
 		c, _ := gin.CreateTestContext(w)
 		c.Request = req
-		log.Println(w.Body)
+		var actualErr interface{}
 
-		suite.authHandler.LoginUser(c)
+		suite.router.POST("/v1/login", suite.authHandler.LoginUser)
 		suite.router.ServeHTTP(w, req)
+		json.Unmarshal(w.Body.Bytes(), &actualErr)
+
 		suite.Equal(http.StatusBadRequest, w.Code)
+		suite.JSONEq(errJson, w.Body.String())
 	})
 
 	suite.Run("should return 500 when error in database", func() {
@@ -95,7 +101,7 @@ func (suite *AuthHandlerTestSuite) TestLoginAuth() {
 		c, _ := gin.CreateTestContext(w)
 		c.Request = req
 
-		suite.authHandler.LoginUser(c)
+		suite.router.POST("/v1/login", suite.authHandler.LoginUser)
 		suite.router.ServeHTTP(w, req)
 		suite.Equal(http.StatusInternalServerError, w.Code)
 	})
@@ -134,10 +140,7 @@ func (suite *AuthHandlerTestSuite) TestRegisterAuth() {
 		req, _ := http.NewRequest("POST", "/v1/register", strings.NewReader(requestBody))
 		w := httptest.NewRecorder()
 
-		c, _ := gin.CreateTestContext(w)
-		c.Request = req
-
-		suite.authHandler.RegisterUser(c)
+		suite.router.POST("/v1/register", suite.authHandler.RegisterUser)
 		suite.router.ServeHTTP(w, req)
 		suite.Equal(http.StatusBadRequest, w.Code)
 	})
@@ -154,11 +157,19 @@ func (suite *AuthHandlerTestSuite) TestRegisterAuth() {
 		req, _ := http.NewRequest("POST", "/v1/register", strings.NewReader(requestBody))
 		w := httptest.NewRecorder()
 
-		c, _ := gin.CreateTestContext(w)
-		c.Request = req
-
-		suite.authHandler.RegisterUser(c)
+		suite.router.POST("/v1/register", suite.authHandler.RegisterUser)
 		suite.router.ServeHTTP(w, req)
 		suite.Equal(http.StatusInternalServerError, w.Code)
+	})
+}
+
+func (suite *AuthHandlerTestSuite) TestLogoutAuth() {
+	suite.Run("should return success to logout 200", func() {
+		suite.router.POST("/logout", suite.authHandler.LogoutUser)
+		req, _ := http.NewRequest(http.MethodPost, "/logout", nil)
+		w := httptest.NewRecorder()
+		suite.router.ServeHTTP(w, req)
+		suite.Equal(http.StatusOK, w.Code)
+		suite.T().Log("body : ", w.Body)
 	})
 }

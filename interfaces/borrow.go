@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/query"
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +17,7 @@ type (
 	}
 
 	BorrowUseCase interface {
-		CreateBorrowRecord(ctx context.Context, borrow *models.Borrow) (*response.BorrowResponse, error)
+		CreateBorrowRecord(ctx context.Context, borrow *models.Borrow) (*models.Borrow, error)
 		GetAllBorrowsRecord(ctx context.Context, whereClauses []query.WhereClause) ([]models.Borrow, error)
 		ReturnBorrowedBookByBorrowId(ctx context.Context, borrowId uint, userId uint) (*models.Borrow, error)
 	}
