@@ -25,9 +25,10 @@ type BorrowHandler struct {
 func (handler *BorrowHandler) ReturnBorrowBook(c *gin.Context) {
 	id := c.Param("id")
 	requestId := uuid.NewString()
-	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
 	val, _ := c.Get("id")
 	userId, _ := val.(uint)
+	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
+	c.Request = c.Request.WithContext(ctx)
 
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
