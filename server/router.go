@@ -10,24 +10,6 @@ import (
 
 func (h *Handlers) InitRouter(r *gin.RouterGroup) {
 
-	// r.Use(func(ctx *gin.Context) {
-	// 	go func() {
-	// 		<-ctx.Done()
-	// 		err := ctx.Request.Context().Err()
-	// 		log.Println("contex done ", err)
-	// 		ctx.Error(err)
-	// 		if errors.Is(err, context.Canceled) {
-	// 			log.Println("context cancelled")
-	// 		}
-
-	// 		if errors.Is(err, context.DeadlineExceeded) {
-	// 			log.Println("context deadline exceeds")
-	// 		}
-
-	// 	}()
-	// 	ctx.Next()
-	// })
-
 	r.Use(middleware.WithTimeOut)
 
 	r.GET("/hello", func(ctx *gin.Context) {
