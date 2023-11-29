@@ -74,6 +74,19 @@ func (suite *BorrowHandlerTestSuite) TestCreateBorrowRecord() {
 		suite.Equal(http.StatusCreated, w.Code)
 	})
 
+	suite.Run("should return 400 after create borrow record", func() {
+
+		req, err := http.NewRequest(http.MethodPost, "/v1/borrowing-records", nil)
+		suite.NoError(err)
+		w := httptest.NewRecorder()
+		// c, _ := gin.CreateTestContext(w)
+
+		suite.router.POST("/v1/borrowing-records", suite.borrowHandler.CreateBorrowRecord)
+		suite.router.ServeHTTP(w, req)
+		suite.T().Log("Response : ", w.Body)
+		suite.Equal(http.StatusBadRequest, w.Code)
+	})
+
 	suite.Run("should return 500 after while failure to make borrow record", func() {
 		requestBody := `{
 			"user_id": 1,
@@ -163,13 +176,31 @@ func (suite *BorrowHandlerTestSuite) TestReturnBook() {
 func (suite *BorrowHandlerTestSuite) TestGetAllBorrows() {
 	suite.Run("should return 200 to get all borrow records", func() {
 		suite.borrowUseCase.On("GetAllBorrowsRecord", mock.Anything, mock.AnythingOfType("[]query.WhereClause")).Return(borrows, nil)
-
 		req, _ := http.NewRequest(http.MethodGet, "/v1/borrowing-records", nil)
 		w := httptest.NewRecorder()
-		ctx, _ := gin.CreateTestContext(w)
-		ctx.Request = req
+		c, _ := gin.CreateTestContext(w)
+		c.Request = req
+
+		suite.borrowHandler.GetAllBorrowsRecord(c)
+		suite.router.ServeHTTP(w, req)
+
+		suite.Equal(http.StatusOK, w.Code)
+		suite.NotNil(w.Body)
+	})
+
+	suite.Run("should return 500 due failed to create borrow", func() {
+		suite.borrowUseCase.
+			On("GetAllBorrowsRecord", mock.Anything, mock.AnythingOfType("[]query.WhereClause")).
+			Return(nil, errors.New("mock error"))
+		req, _ := http.NewRequest(http.MethodGet, "/v1/borrowing-records", nil)
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = req
 
 		suite.router.GET("/v1/borrowing-records", suite.borrowHandler.GetAllBorrowsRecord)
-		suite.Equal(http.StatusOK, w.Code)
+		suite.router.ServeHTTP(w, req)
+
+		suite.Equal(http.StatusInternalServerError, w.Code)
+		suite.NotNil(w.Body)
 	})
 }

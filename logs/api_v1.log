@@ -2,3 +2,15 @@
 {"level":"error","method":"POST","msg":"Key: 'UserRequest.Name' Error:Field validation for 'Name' failed on the 'required' tag","status":500,"time":"2023-11-29T14:55:30+07:00","uri":"/v1/register"}
 {"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-11-29T14:55:53+07:00"}
 {"level":"error","method":"POST","msg":"Key: 'UserRequest.Name' Error:Field validation for 'Name' failed on the 'required' tag","status":500,"time":"2023-11-29T14:55:53+07:00","uri":"/v1/register"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-11-29T15:20:52+07:00"}
+{"level":"info","msg":"Success","time":"2023-11-29T15:20:52+07:00"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-11-29T15:25:44+07:00"}
+{"level":"info","msg":"Success","time":"2023-11-29T15:25:44+07:00"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-11-29T15:25:47+07:00"}
+{"level":"info","msg":"Success","time":"2023-11-29T15:25:47+07:00"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-11-29T15:53:43+07:00"}
+{"latency":0.000141438,"level":"error","method":"POST","msg":"Key: 'UserRequest.Name' Error:Field validation for 'Name' failed on the 'required' tag","status":500,"time":"2023-11-29T15:53:43+07:00","uri":"/v1/register"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-11-29T15:54:45+07:00"}
+{"latency":0.066707784,"level":"error","method":"POST","msg":"ERROR: duplicate key value violates unique constraint \"users_email_key\" (SQLSTATE 23505)","status":500,"time":"2023-11-29T15:54:45+07:00","uri":"/v1/register"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-11-29T15:54:55+07:00"}
+{"level":"info","msg":"Success","time":"2023-11-29T15:54:55+07:00"}

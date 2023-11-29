@@ -1,6 +1,7 @@
 package handler_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -160,8 +161,6 @@ func (suite *BookHandlerTestSuite) TestCreate() {
 		ctx, _ := gin.CreateTestContext(w)
 		ctx.Request = req
 
-		// suite.bookHandler.CreateBook(ctx)
-
 		suite.router.POST("/v1/books", suite.bookHandler.CreateBook)
 		suite.router.ServeHTTP(w, req)
 
@@ -170,17 +169,21 @@ func (suite *BookHandlerTestSuite) TestCreate() {
 	})
 
 	suite.Run("should return 500 due error in sql", func() {
-		requestBody := `{
-			"title": "Book 3",
-			"description": "Book Description 5",
-			"quantity": 2,
-			"cover": "lalala",
-			"author_id": 2
-		}`
+		requestBody := map[string]interface{}{
+			"title":       "Book 1",
+			"description": "Book Description 2",
+			"quantity":    2,
+			"cover":       "",
+			"author_id":   1,
+		}
 
-		suite.bookUseCase.On("CreateBook", mock.Anything, mock.Anything).Return(nil, errors.New("mock error"))
+		body, _ := json.Marshal(requestBody)
 
-		req, _ := http.NewRequest(http.MethodPost, "/v1/books", strings.NewReader(requestBody))
+		req, _ := http.NewRequest(http.MethodPost, "/v1/books", bytes.NewReader(body))
+
+		suite.bookUseCase.
+			On("CreateBook", mock.Anything, mock.AnythingOfType("*models.Book")).
+			Return(nil, errors.New("mock error"))
 
 		w := httptest.NewRecorder()
 

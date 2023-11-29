@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strconv"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
@@ -54,7 +55,7 @@ func (handler *BorrowHandler) CreateBorrowRecord(c *gin.Context) {
 	ctx := context.WithValue(c.Request.Context(), "request_id", requestId)
 
 	if err := c.ShouldBind(&request); err != nil {
-		c.Error(err)
+		c.Error(apperror.NewErrBadRequest("Bad request from create borrow"))
 		return
 	}
 
