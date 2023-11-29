@@ -104,6 +104,7 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 			Return(nil, errors.New("mock error"))
 
 		req, _ := http.NewRequest("POST", "/v1/users", strings.NewReader(requestBody))
+		req.Header.Set("Content-Type", "application/json")
 		w := httptest.NewRecorder()
 
 		suite.T().Log(requestBody)

@@ -184,10 +184,8 @@ func (suite *BookHandlerTestSuite) TestCreate() {
 			Return(nil, errors.New("mock error"))
 
 		req, _ := http.NewRequest(http.MethodPost, "/v1/books", bytes.NewReader(body))
+		req.Header.Set("Content-Type", "application/json")
 		w := httptest.NewRecorder()
-
-		// ctx, _ := gin.CreateTestContext(w)
-		// ctx.Request = req
 
 		suite.router.POST("/v1/books", suite.bookHandler.CreateBook)
 		suite.router.ServeHTTP(w, req)
