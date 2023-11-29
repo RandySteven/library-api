@@ -8,6 +8,8 @@ import (
 
 var Log Logger
 
+const FileName = "./logs/api_v1.log"
+
 func init() {
 	lw := logrus.New()
 	lw.SetFormatter(&logrus.JSONFormatter{})
@@ -15,6 +17,11 @@ func init() {
 	Log = &loggerWrapper{
 		lw: lw,
 	}
+	file, err := os.OpenFile(FileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		return
+	}
+	lw.Out = file
 }
 
 type Logger interface {

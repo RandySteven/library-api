@@ -20,11 +20,11 @@ func main() {
 	}
 	r := gin.Default()
 	r.ContextWithFallback = true
+	r.Use(middleware.LoggerMiddleware())
+	r.Use(middleware.ErrorMiddleware())
 
 	handlers := InitHandlers()
 
-	r.Use(middleware.LoggerMiddleware())
-	r.Use(middleware.ErrorMiddleware())
 	v1 := r.Group("/v1")
 	v1.POST("/login", handlers.AuthHandler.LoginUser)
 	v1.POST("/register", handlers.AuthHandler.RegisterUser)
