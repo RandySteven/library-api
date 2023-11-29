@@ -99,7 +99,7 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 			"phone_number": "+6285347391672",
 			"password": "test_1234"
 		}`
-		suite.userUseCase.On("CreateUser", mock.Anything, mock.AnythingOfType("*models.User")).Return(nil, errors.New(""))
+		suite.userUseCase.On("CreateUser", mock.Anything, mock.AnythingOfType("*models.User")).Return(nil, errors.New("mock error"))
 
 		req, err := http.NewRequest(http.MethodPost, "/v1/users", strings.NewReader(requestBody))
 		suite.NoError(err)
@@ -108,7 +108,7 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 		ctx, _ := gin.CreateTestContext(w)
 		ctx.Request = req
 
-		suite.userHandler.CreateUser(ctx)
+		suite.router.POST("/v1/users", suite.userHandler.CreateUser)
 		suite.router.ServeHTTP(w, req)
 
 		suite.Equal(http.StatusInternalServerError, w.Code)

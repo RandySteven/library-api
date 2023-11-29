@@ -116,4 +116,60 @@ func (suite *BorrowHandlerTestSuite) TestReturnBook() {
 		suite.T().Log("Response : ", w.Body)
 		suite.Equal(http.StatusOK, w.Code)
 	})
+
+	suite.Run("should return 500 due invalid query param", func() {
+		requestBody := `{
+			"user_id": 1,
+			"book_id": 1
+		}`
+
+		suite.borrowUseCase.
+			On("ReturnBorrowedBookByBorrowId", mock.Anything, mock.Anything, mock.Anything).
+			Return(&borrows[0], nil)
+		req, err := http.NewRequest(http.MethodPut, "/v1/borrowing-records/A", strings.NewReader(requestBody))
+		suite.NoError(err)
+		w := httptest.NewRecorder()
+		q := req.URL.Query()
+		q.Add("id", "A")
+
+		suite.router.PUT("/v1/borrowing-records/:id", suite.borrowHandler.ReturnBorrowBook)
+		suite.router.ServeHTTP(w, req)
+		suite.T().Log("Response : ", w.Body)
+		suite.Equal(http.StatusInternalServerError, w.Code)
+	})
+
+	suite.Run("should return 500 due invalid query param", func() {
+		requestBody := `{
+			"user_id": 1,
+			"book_id": 1
+		}`
+
+		suite.borrowUseCase.
+			On("ReturnBorrowedBookByBorrowId", mock.Anything, mock.Anything, mock.Anything).
+			Return(nil, errors.New("mock error"))
+		req, err := http.NewRequest(http.MethodPut, "/v1/borrowing-records/2", strings.NewReader(requestBody))
+		suite.NoError(err)
+		w := httptest.NewRecorder()
+		q := req.URL.Query()
+		q.Add("id", "2")
+
+		suite.router.PUT("/v1/borrowing-records/:id", suite.borrowHandler.ReturnBorrowBook)
+		suite.router.ServeHTTP(w, req)
+		suite.T().Log("Response : ", w.Body)
+		suite.Equal(http.StatusInternalServerError, w.Code)
+	})
+}
+
+func (suite *BorrowHandlerTestSuite) TestGetAllBorrows() {
+	suite.Run("should return 200 to get all borrow records", func() {
+		suite.borrowUseCase.On("GetAllBorrowsRecord", mock.Anything, mock.AnythingOfType("[]query.WhereClause")).Return(borrows, nil)
+
+		req, _ := http.NewRequest(http.MethodGet, "/v1/borrowing-records", nil)
+		w := httptest.NewRecorder()
+		ctx, _ := gin.CreateTestContext(w)
+		ctx.Request = req
+
+		suite.router.GET("/v1/borrowing-records", suite.borrowHandler.GetAllBorrowsRecord)
+		suite.Equal(http.StatusOK, w.Code)
+	})
 }

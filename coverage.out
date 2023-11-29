@@ -29,8 +29,8 @@ git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler
 git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/borrow_handler.go:25.64,34.16 8 1
 git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/borrow_handler.go:38.2,39.16 2 1
 git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/borrow_handler.go:43.2,47.29 2 1
-git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/borrow_handler.go:34.16,37.3 2 0
-git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/borrow_handler.go:39.16,42.3 2 0
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/borrow_handler.go:34.16,37.3 2 1
+git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/borrow_handler.go:39.16,42.3 2 1
 git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/borrow_handler.go:51.66,56.47 4 1
 git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/borrow_handler.go:61.2,70.16 5 1
 git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/borrow_handler.go:75.2,79.34 2 1

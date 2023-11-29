@@ -167,8 +167,6 @@ func (suite *BookHandlerTestSuite) TestCreate() {
 
 		suite.Equal(http.StatusBadRequest, w.Code)
 
-		// var resp response.Response
-		// suite.NoError(json.Unmarshal(w.Body.Bytes(), &resp))
 	})
 
 	suite.Run("should return 500 due error in sql", func() {
@@ -189,6 +187,7 @@ func (suite *BookHandlerTestSuite) TestCreate() {
 		ctx, _ := gin.CreateTestContext(w)
 		ctx.Request = req
 
+		suite.router.POST("/v1/books", suite.bookHandler.CreateBook)
 		suite.router.ServeHTTP(w, req)
 
 		suite.Equal(http.StatusInternalServerError, w.Code)
