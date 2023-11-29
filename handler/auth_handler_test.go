@@ -63,6 +63,29 @@ func (suite *AuthHandlerTestSuite) TestLoginAuth() {
 		suite.Equal(http.StatusOK, w.Code)
 	})
 
+	suite.Run("should return 400 due error invalid field", func() {
+		requestBody := `{
+			"email": "randysteven12@gmail.com",
+		}`
+		errJson := `{
+			"errors": "Password too long"
+		}`
+		var expectedErr interface{}
+		json.Unmarshal([]byte(errJson), expectedErr)
+		req, _ := http.NewRequest("POST", "/v1/login", strings.NewReader(requestBody))
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = req
+		var actualErr interface{}
+
+		suite.router.POST("/v1/login", suite.authHandler.LoginUser)
+		suite.router.ServeHTTP(w, req)
+		json.Unmarshal(w.Body.Bytes(), &actualErr)
+
+		suite.Equal(http.StatusBadRequest, w.Code)
+		suite.JSONEq(errJson, w.Body.String())
+	})
+
 	suite.Run("should return 400 due error while encrypt password using more than limit password", func() {
 		requestBody := `{
 			"email": "randysteven12@gmail.com",
@@ -129,7 +152,22 @@ func (suite *AuthHandlerTestSuite) TestRegisterAuth() {
 		suite.Equal(http.StatusCreated, w.Code)
 	})
 
-	suite.Run("should return 400 when user succes to register", func() {
+	suite.Run("should return 400 when user failed to register", func() {
+		requestBody := `{
+			"email": "randysteven12@gmail.com",
+			"name": "Randy Steven",
+			"phone_number": "0812345678",
+		}`
+
+		req, _ := http.NewRequest("POST", "/v1/register", strings.NewReader(requestBody))
+		w := httptest.NewRecorder()
+
+		suite.router.POST("/v1/register", suite.authHandler.RegisterUser)
+		suite.router.ServeHTTP(w, req)
+		suite.Equal(http.StatusBadRequest, w.Code)
+	})
+
+	suite.Run("should return 400 when user faield to register", func() {
 		requestBody := `{
 			"email": "randysteven12@gmail.com",
 			"name": "Randy Steven",
@@ -145,13 +183,15 @@ func (suite *AuthHandlerTestSuite) TestRegisterAuth() {
 		suite.Equal(http.StatusBadRequest, w.Code)
 	})
 
-	suite.Run("should return 500 when user succes to register", func() {
+	suite.Run("should return 500 when user failed to register", func() {
 		requestBody := `{
 			"email": "randysteven12@gmail.com",
 			"name": "Randy Steven",
+			"phone_number": "08123456789",
 			"password": "test_1234"
 		}`
-		suite.authUseCase.On("RegisterUser", mock.Anything, mock.AnythingOfType("*models.User")).
+		suite.authUseCase.
+			On("RegisterUser", mock.Anything, mock.AnythingOfType("*models.User")).
 			Return(nil, errors.New("mock error"))
 
 		req, _ := http.NewRequest("POST", "/v1/register", strings.NewReader(requestBody))

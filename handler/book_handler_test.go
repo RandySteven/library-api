@@ -179,16 +179,15 @@ func (suite *BookHandlerTestSuite) TestCreate() {
 
 		body, _ := json.Marshal(requestBody)
 
-		req, _ := http.NewRequest(http.MethodPost, "/v1/books", bytes.NewReader(body))
-
 		suite.bookUseCase.
 			On("CreateBook", mock.Anything, mock.AnythingOfType("*models.Book")).
 			Return(nil, errors.New("mock error"))
 
+		req, _ := http.NewRequest(http.MethodPost, "/v1/books", bytes.NewReader(body))
 		w := httptest.NewRecorder()
 
-		ctx, _ := gin.CreateTestContext(w)
-		ctx.Request = req
+		// ctx, _ := gin.CreateTestContext(w)
+		// ctx.Request = req
 
 		suite.router.POST("/v1/books", suite.bookHandler.CreateBook)
 		suite.router.ServeHTTP(w, req)

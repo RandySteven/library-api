@@ -94,23 +94,22 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 
 	suite.Run("should return 500 if user success created", func() {
 		requestBody := `{
+			"email": "randysteven12@gmail.com",
 			"name": "Randy Steven",
-			"email": "randy.steven@shopee.com",
-			"phone_number": "+6285347391672",
+			"phone_number": "08123456789",
 			"password": "test_1234"
 		}`
-		suite.userUseCase.On("CreateUser", mock.Anything, mock.AnythingOfType("*models.User")).Return(nil, errors.New("mock error"))
+		suite.userUseCase.
+			On("CreateUser", mock.Anything, mock.AnythingOfType("*models.User")).
+			Return(nil, errors.New("mock error"))
 
-		req, err := http.NewRequest(http.MethodPost, "/v1/users", strings.NewReader(requestBody))
-		suite.NoError(err)
-
+		req, _ := http.NewRequest("POST", "/v1/users", strings.NewReader(requestBody))
 		w := httptest.NewRecorder()
-		ctx, _ := gin.CreateTestContext(w)
-		ctx.Request = req
 
+		suite.T().Log(requestBody)
+		suite.T().Log(w.Body)
 		suite.router.POST("/v1/users", suite.userHandler.CreateUser)
 		suite.router.ServeHTTP(w, req)
-
 		suite.Equal(http.StatusInternalServerError, w.Code)
 	})
 }
