@@ -14,3 +14,7 @@
 {"latency":0.066707784,"level":"error","method":"POST","msg":"ERROR: duplicate key value violates unique constraint \"users_email_key\" (SQLSTATE 23505)","status":500,"time":"2023-11-29T15:54:45+07:00","uri":"/v1/register"}
 {"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-11-29T15:54:55+07:00"}
 {"level":"info","msg":"Success","time":"2023-11-29T15:54:55+07:00"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-12-08T10:43:19+07:00"}
+{"level":"info","msg":"Success","time":"2023-12-08T10:43:19+07:00"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-12-08T13:02:58+07:00"}
+{"latency":0.000086201,"level":"error","method":"POST","msg":"Key: 'UserRequest.PhoneNumber' Error:Field validation for 'PhoneNumber' failed on the 'required' tag","status":500,"time":"2023-12-08T13:02:58+07:00","uri":"/v1/register"}
