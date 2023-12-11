@@ -1,21 +1,18 @@
 package main
 
 import (
-	"context"
-	"errors"
 	"log"
 	"net"
 	"os"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/cmd/interceptor"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	handler_grpc "git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/grpc"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/pb"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/usecase"
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/utils"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 )
 
 func InitConfig() *models.Config {
@@ -25,30 +22,6 @@ func InitConfig() *models.Config {
 	dbHost := os.Getenv("DB_HOST")
 	dbUser := os.Getenv("DB_USER")
 	return models.NewConfig(dbHost, dbPort, dbUser, dbPass, dbName)
-}
-
-func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-
-	if info.FullMethod == "/library.AuthService/Login" {
-		return handler(ctx, req)
-	}
-
-	if !ok {
-		return nil, errors.New("missing token")
-	}
-
-	tokenHeader := md["authorization"][0]
-	token := utils.ValidateToken(tokenHeader)
-	if token == nil {
-		return nil, errors.New("error get token")
-	}
-
-	ctx = context.WithValue(ctx, "id", token.ID)
-	ctx = context.WithValue(ctx, "name", token.Name)
-	ctx = context.WithValue(ctx, "email", token.Email)
-
-	return handler(ctx, req)
 }
 
 func main() {
@@ -65,7 +38,7 @@ func main() {
 	}
 
 	opt := []grpc.ServerOption{
-		grpc.ChainUnaryInterceptor(AuthInterceptor),
+		grpc.ChainUnaryInterceptor(interceptor.AuthInterceptor, interceptor.ErrorInterceptor),
 	}
 
 	server := grpc.NewServer(opt...)

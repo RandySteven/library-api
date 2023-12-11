@@ -1,29 +1,57 @@
-package main
+package interceptor
 
 import (
 	"context"
 	"errors"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/utils"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
+
+func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+
+	if info.FullMethod == "/library.AuthService/Login" {
+		return handler(ctx, req)
+	}
+
+	if !ok {
+		return nil, errors.New("missing token")
+	}
+
+	tokenHeader := md["authorization"][0]
+	token := utils.ValidateToken(tokenHeader)
+	if token == nil {
+		return nil, errors.New("error get token")
+	}
+
+	ctx = context.WithValue(ctx, "id", token.ID)
+	ctx = context.WithValue(ctx, "name", token.Name)
+	ctx = context.WithValue(ctx, "email", token.Email)
+
+	return handler(ctx, req)
+}
 
 func ErrorInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	res, err := handler(ctx, req)
 
-	var errBadRequest *apperror.ErrBadRequest
-	var errNoDuplication *apperror.ErrNoDuplication
-	var errBookIdNotFound *apperror.ErrBookIdNotFound
-	var errUserIdNotFound *apperror.ErrUserIdNotFound
-	var errBookQuantityZero *apperror.ErrBookQuantityZero
-	var errBorrowStatusAlreadyReturned *apperror.ErrBorrowStatusAlreadyReturned
-	var errUnauthorized *apperror.ErrUnauthorized
-	var errBorrowRecordNotFound *apperror.ErrBorrowRecordNotFound
-	var errPermissionDenied *apperror.ErrPermissionDenied
-	var errPasswordTooLong *apperror.ErrPasswordTooLong
+	var (
+		errBadRequest                  *apperror.ErrBadRequest
+		errNoDuplication               *apperror.ErrNoDuplication
+		errBookIdNotFound              *apperror.ErrBookIdNotFound
+		errUserIdNotFound              *apperror.ErrUserIdNotFound
+		errBookQuantityZero            *apperror.ErrBookQuantityZero
+		errBorrowStatusAlreadyReturned *apperror.ErrBorrowStatusAlreadyReturned
+		errUnauthorized                *apperror.ErrUnauthorized
+		errBorrowRecordNotFound        *apperror.ErrBorrowRecordNotFound
+		errPermissionDenied            *apperror.ErrPermissionDenied
+		errPasswordTooLong             *apperror.ErrPasswordTooLong
+	)
 
 	if err != nil {
 		switch {
