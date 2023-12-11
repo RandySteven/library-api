@@ -6,14 +6,13 @@ import (
 	"log"
 	"net"
 	"os"
-	"strings"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	handler_grpc "git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/grpc"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/pb"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/usecase"
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/utils"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -28,10 +27,30 @@ func InitConfig() *models.Config {
 	return models.NewConfig(dbHost, dbPort, dbUser, dbPass, dbName)
 }
 
+func valid(tokenString string) *configs.JWTClaim {
+
+	if tokenString == "" {
+		return nil
+	}
+
+	claims := &configs.JWTClaim{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
+		return configs.JWT_KEY, nil
+	})
+
+	if err != nil || !token.Valid {
+		log.Println("err token : ", err)
+		log.Println("token valid : ", token.Valid)
+		return nil
+	}
+
+	return claims
+}
+
 func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 
-	if info.FullMethod != "/library.AuthService/Login" {
+	if info.FullMethod == "/library.AuthService/Login" {
 		return handler(ctx, req)
 	}
 
@@ -39,11 +58,10 @@ func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, h
 		return nil, errors.New("missing token")
 	}
 
-	tokenHeader := strings.TrimPrefix(md["Authorization"][0], "Bearer ")
-
-	token := utils.ValidateToken(tokenHeader)
+	tokenHeader := md["authorization"][0]
+	token := valid(tokenHeader)
 	if token == nil {
-		return nil, errors.New("error generate token jwt")
+		return nil, errors.New("error get token")
 	}
 
 	ctx = context.WithValue(ctx, "id", token.ID)

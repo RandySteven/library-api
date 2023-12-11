@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package library;
+
 option go_package = "./pb";
 
 message BorrowRequest {

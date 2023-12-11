@@ -1,5 +1,6 @@
-proto < ./../proto/library_api.proto
+proto < ./../proto/library.proto
 @host=http://localhost:50053
 
-GRPC /BookService/GetAllBooks
+GRPC /library.BookService/GetAllBooks
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIyODUxMzl9.2B5ZN7G46cLO3Cw4HSVsADW7c_GIBgcH1BhvNDd23mw
 {}

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.12.4
-// source: proto/library_api.proto
+// source: proto/library.proto
 
 package pb
 
@@ -35,7 +35,7 @@ func NewBorrowBookServiceClient(cc grpc.ClientConnInterface) BorrowBookServiceCl
 
 func (c *borrowBookServiceClient) CreateBorrowBook(ctx context.Context, in *BorrowRequest, opts ...grpc.CallOption) (*BorrowBookResponse, error) {
 	out := new(BorrowBookResponse)
-	err := c.cc.Invoke(ctx, "/BorrowBookService/CreateBorrowBook", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/library.BorrowBookService/CreateBorrowBook", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func _BorrowBookService_CreateBorrowBook_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BorrowBookService/CreateBorrowBook",
+		FullMethod: "/library.BorrowBookService/CreateBorrowBook",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BorrowBookServiceServer).CreateBorrowBook(ctx, req.(*BorrowRequest))
@@ -92,7 +92,7 @@ func _BorrowBookService_CreateBorrowBook_Handler(srv interface{}, ctx context.Co
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var BorrowBookService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "BorrowBookService",
+	ServiceName: "library.BorrowBookService",
 	HandlerType: (*BorrowBookServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -101,7 +101,7 @@ var BorrowBookService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/library_api.proto",
+	Metadata: "proto/library.proto",
 }
 
 // AuthServiceClient is the client API for AuthService service.
@@ -121,7 +121,7 @@ func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
 
 func (c *authServiceClient) Login(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthResponse, error) {
 	out := new(AuthResponse)
-	err := c.cc.Invoke(ctx, "/AuthService/Login", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/library.AuthService/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +166,7 @@ func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/AuthService/Login",
+		FullMethod: "/library.AuthService/Login",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).Login(ctx, req.(*AuthRequest))
@@ -178,7 +178,7 @@ func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(i
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AuthService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "AuthService",
+	ServiceName: "library.AuthService",
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -187,7 +187,7 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/library_api.proto",
+	Metadata: "proto/library.proto",
 }
 
 // BookServiceClient is the client API for BookService service.
@@ -207,7 +207,7 @@ func NewBookServiceClient(cc grpc.ClientConnInterface) BookServiceClient {
 
 func (c *bookServiceClient) GetAllBooks(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetBookResponses, error) {
 	out := new(GetBookResponses)
-	err := c.cc.Invoke(ctx, "/BookService/GetAllBooks", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/library.BookService/GetAllBooks", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -252,7 +252,7 @@ func _BookService_GetAllBooks_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/BookService/GetAllBooks",
+		FullMethod: "/library.BookService/GetAllBooks",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BookServiceServer).GetAllBooks(ctx, req.(*Empty))
@@ -264,7 +264,7 @@ func _BookService_GetAllBooks_Handler(srv interface{}, ctx context.Context, dec 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var BookService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "BookService",
+	ServiceName: "library.BookService",
 	HandlerType: (*BookServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -273,7 +273,7 @@ var BookService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/library_api.proto",
+	Metadata: "proto/library.proto",
 }
 
 // UserServiceClient is the client API for UserService service.
@@ -293,7 +293,7 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 
 func (c *userServiceClient) GetAllUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*UserResponsesDTO, error) {
 	out := new(UserResponsesDTO)
-	err := c.cc.Invoke(ctx, "/UserService/GetAllUsers", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/library.UserService/GetAllUsers", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -338,7 +338,7 @@ func _UserService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/UserService/GetAllUsers",
+		FullMethod: "/library.UserService/GetAllUsers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).GetAllUsers(ctx, req.(*Empty))
@@ -350,7 +350,7 @@ func _UserService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "UserService",
+	ServiceName: "library.UserService",
 	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -359,5 +359,5 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/library_api.proto",
+	Metadata: "proto/library.proto",
 }

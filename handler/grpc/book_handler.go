@@ -18,6 +18,12 @@ func NewBookHandler(usecase interfaces.BookUseCase) *BookHandler {
 
 func (h *BookHandler) GetAllBooks(ctx context.Context, empty *pb.Empty) (*pb.GetBookResponses, error) {
 
+	// id := ctx.Value("id")
+
+	// if id == "" {
+	// 	return nil, &apperror.ErrUnauthorized{}
+	// }
+
 	books, err := h.usecase.GetAllBooks(ctx, nil)
 	if err != nil {
 		return nil, err

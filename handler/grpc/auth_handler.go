@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/pb"
@@ -28,6 +29,8 @@ func (h *AuthHandler) Login(ctx context.Context, req *pb.AuthRequest) (*pb.AuthR
 		Email:    strings.TrimSpace(req.Email),
 		Password: strings.TrimSpace(req.Password),
 	}
+
+	log.Println(configs.JWT_KEY)
 
 	errValidate := utils.Validate(user)
 	if errValidate != nil {

@@ -1,12 +1,19 @@
 package configs
 
 import (
-	"os"
+	"log"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/joho/godotenv"
 )
 
-var JWT_KEY = []byte(os.Getenv("JWT_TOKEN"))
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("no env got")
+	}
+}
+
+var JWT_KEY = []byte("cCM7rrsrmle6")
 
 type JWTClaim struct {
 	ID    uint
