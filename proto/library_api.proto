@@ -7,8 +7,28 @@ message BorrowRequest {
 }
 
 message AuthRequest {
-    string email = 1;
+    string email = 1 ;
     string password = 2;
+}
+
+message Author {
+    uint32 id = 1;
+    string name = 2;
+    string created_at = 3;
+    string updated_at = 4;
+    string deleted_at = 5;
+}
+
+message BookResponse {
+    uint32 id = 1;
+    string title = 2;
+    string description = 3;
+    uint32 quantity = 4;
+    string cover = 5;
+    Author author = 6;
+    string created_at = 7;
+    string updated_at = 8;
+    string deleted_at = 9;
 }
 
 message BorrowResponse {
@@ -23,6 +43,17 @@ message BorrowResponse {
     string updated_at = 9;
 }
 
+message UserResponse {
+    uint32 id = 1;
+    string name = 2;
+    string email = 3;
+    string phone_number = 4;
+    string password = 5;
+    string created_at = 6;
+    string updated_at = 7;
+    string deleted_at = 8;
+}
+
 message AuthResponse {
     string message = 1;
     string token = 2;
@@ -33,10 +64,30 @@ message BorrowBookResponse {
     BorrowResponse borrow_response = 2;
 }
 
+message GetBookResponses {
+    string message = 1;
+    repeated BookResponse book_responses = 2;
+}
+
+message UserResponsesDTO {
+    string message = 1;
+    repeated UserResponse users = 2;
+}
+
+message Empty{}
+
 service BorrowBookService {
     rpc CreateBorrowBook(BorrowRequest) returns (BorrowBookResponse);
 }
 
 service AuthService {
     rpc Login(AuthRequest) returns (AuthResponse);
+}
+
+service BookService {
+    rpc GetAllBooks(Empty) returns (GetBookResponses);
+}
+
+service UserService{
+    rpc GetAllUsers(Empty) returns (UserResponsesDTO);
 }

@@ -5,9 +5,11 @@ import (
 	"log"
 	"strings"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/request"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/pb"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/utils"
 )
 
 type AuthHandler struct {
@@ -25,6 +27,11 @@ func (h *AuthHandler) Login(ctx context.Context, req *pb.AuthRequest) (*pb.AuthR
 	user := &request.UserLoginRequest{
 		Email:    strings.TrimSpace(req.Email),
 		Password: strings.TrimSpace(req.Password),
+	}
+
+	errValidate := utils.Validate(user)
+	if errValidate != nil {
+		return &pb.AuthResponse{Message: "Login Failed"}, apperror.NewErrBadRequest(errValidate[0])
 	}
 
 	token, err := h.uscase.LoginUserByEmail(ctx, user.Email, user.Password)

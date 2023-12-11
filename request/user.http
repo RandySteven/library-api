@@ -1,0 +1,5 @@
+proto < ./../proto/library_api.proto
+@host=http://localhost:50053
+
+GRPC /UserService/GetAllUsers
+{}

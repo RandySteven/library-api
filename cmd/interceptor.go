@@ -35,6 +35,7 @@ func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, h
 }
 
 func ErrorInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+	res, err := handler(ctx, req)
 
-	return handler(ctx, req)
+	return res, err
 }

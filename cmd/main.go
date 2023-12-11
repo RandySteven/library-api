@@ -49,9 +49,12 @@ func main() {
 	}
 
 	authUsecase := usecase.NewAuthUseCase(repository.AuthRepository)
+	userUsecase := usecase.NewUserUseCase(repository.UserRepository)
 	auth := handler_grpc.NewAuthHandler(authUsecase)
+	user := handler_grpc.NewUserHandler(userUsecase)
 
 	pb.RegisterAuthServiceServer(server, auth)
+	pb.RegisterUserServiceServer(server, user)
 
 	if err = server.Serve(listener); err != nil {
 		log.Fatal("err : ", err)

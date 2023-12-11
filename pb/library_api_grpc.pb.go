@@ -189,3 +189,175 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/library_api.proto",
 }
+
+// BookServiceClient is the client API for BookService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type BookServiceClient interface {
+	GetAllBooks(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetBookResponses, error)
+}
+
+type bookServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewBookServiceClient(cc grpc.ClientConnInterface) BookServiceClient {
+	return &bookServiceClient{cc}
+}
+
+func (c *bookServiceClient) GetAllBooks(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetBookResponses, error) {
+	out := new(GetBookResponses)
+	err := c.cc.Invoke(ctx, "/BookService/GetAllBooks", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// BookServiceServer is the server API for BookService service.
+// All implementations must embed UnimplementedBookServiceServer
+// for forward compatibility
+type BookServiceServer interface {
+	GetAllBooks(context.Context, *Empty) (*GetBookResponses, error)
+	mustEmbedUnimplementedBookServiceServer()
+}
+
+// UnimplementedBookServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedBookServiceServer struct {
+}
+
+func (UnimplementedBookServiceServer) GetAllBooks(context.Context, *Empty) (*GetBookResponses, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllBooks not implemented")
+}
+func (UnimplementedBookServiceServer) mustEmbedUnimplementedBookServiceServer() {}
+
+// UnsafeBookServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BookServiceServer will
+// result in compilation errors.
+type UnsafeBookServiceServer interface {
+	mustEmbedUnimplementedBookServiceServer()
+}
+
+func RegisterBookServiceServer(s grpc.ServiceRegistrar, srv BookServiceServer) {
+	s.RegisterService(&BookService_ServiceDesc, srv)
+}
+
+func _BookService_GetAllBooks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookServiceServer).GetAllBooks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/BookService/GetAllBooks",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookServiceServer).GetAllBooks(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// BookService_ServiceDesc is the grpc.ServiceDesc for BookService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var BookService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "BookService",
+	HandlerType: (*BookServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetAllBooks",
+			Handler:    _BookService_GetAllBooks_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/library_api.proto",
+}
+
+// UserServiceClient is the client API for UserService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type UserServiceClient interface {
+	GetAllUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*UserResponsesDTO, error)
+}
+
+type userServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
+	return &userServiceClient{cc}
+}
+
+func (c *userServiceClient) GetAllUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*UserResponsesDTO, error) {
+	out := new(UserResponsesDTO)
+	err := c.cc.Invoke(ctx, "/UserService/GetAllUsers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UserServiceServer is the server API for UserService service.
+// All implementations must embed UnimplementedUserServiceServer
+// for forward compatibility
+type UserServiceServer interface {
+	GetAllUsers(context.Context, *Empty) (*UserResponsesDTO, error)
+	mustEmbedUnimplementedUserServiceServer()
+}
+
+// UnimplementedUserServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedUserServiceServer struct {
+}
+
+func (UnimplementedUserServiceServer) GetAllUsers(context.Context, *Empty) (*UserResponsesDTO, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllUsers not implemented")
+}
+func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
+
+// UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserServiceServer will
+// result in compilation errors.
+type UnsafeUserServiceServer interface {
+	mustEmbedUnimplementedUserServiceServer()
+}
+
+func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
+	s.RegisterService(&UserService_ServiceDesc, srv)
+}
+
+func _UserService_GetAllUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAllUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/UserService/GetAllUsers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAllUsers(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var UserService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "UserService",
+	HandlerType: (*UserServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetAllUsers",
+			Handler:    _UserService_GetAllUsers_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/library_api.proto",
+}
