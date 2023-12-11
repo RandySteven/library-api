@@ -6,9 +6,11 @@ import (
 	"net/http"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -49,4 +51,22 @@ func ResponseHandler(res http.ResponseWriter, httpStatus int, resp response.Resp
 
 func ResponseEncoder(c *gin.Context, statusCode int, resp response.Response) {
 	c.JSON(statusCode, resp)
+}
+
+func ValidateToken(tokenString string) *configs.JWTClaim {
+
+	if tokenString == "" {
+		return nil
+	}
+
+	claims := &configs.JWTClaim{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
+		return configs.JWT_KEY, nil
+	})
+
+	if err != nil || !token.Valid {
+		return nil
+	}
+
+	return claims
 }

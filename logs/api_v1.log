@@ -18,3 +18,17 @@
 {"level":"info","msg":"Success","time":"2023-12-08T10:43:19+07:00"}
 {"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-12-08T13:02:58+07:00"}
 {"latency":0.000086201,"level":"error","method":"POST","msg":"Key: 'UserRequest.PhoneNumber' Error:Field validation for 'PhoneNumber' failed on the 'required' tag","status":500,"time":"2023-12-08T13:02:58+07:00","uri":"/v1/register"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-12-09T20:11:31+07:00"}
+{"level":"info","msg":"Success","time":"2023-12-09T20:11:31+07:00"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-12-09T20:11:44+07:00"}
+{"level":"info","msg":"Success","time":"2023-12-09T20:11:44+07:00"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-12-09T20:11:57+07:00"}
+{"level":"info","msg":"Success","time":"2023-12-09T20:11:57+07:00"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-12-09T20:13:06+07:00"}
+{"level":"info","msg":"Success","time":"2023-12-09T20:13:06+07:00"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-12-09T20:13:19+07:00"}
+{"level":"info","msg":"Success","time":"2023-12-09T20:13:19+07:00"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-12-09T20:13:30+07:00"}
+{"level":"info","msg":"Success","time":"2023-12-09T20:13:30+07:00"}
+{"level":"error","msg":"Request","request_body":{"Reader":{}},"time":"2023-12-09T20:13:37+07:00"}
+{"level":"info","msg":"Success","time":"2023-12-09T20:13:37+07:00"}

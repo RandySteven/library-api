@@ -1,86 +1,61 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
+	"log"
+	"net"
+	"os"
 
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/payloads/response"
-	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/proto"
-	pro "github.com/golang/protobuf/proto"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/configs"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
+	handler_grpc "git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/grpc"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/pb"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/usecase"
+	"github.com/joho/godotenv"
+	"google.golang.org/grpc"
 )
 
-func encode(data interface{}) string {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return err.Error()
-	}
-	return string(jsonData)
+func InitConfig() *models.Config {
+	dbName := os.Getenv("DB_NAME")
+	dbPort := os.Getenv("DB_PORT")
+	dbPass := os.Getenv("DB_PASS")
+	dbHost := os.Getenv("DB_HOST")
+	dbUser := os.Getenv("DB_USER")
+	return models.NewConfig(dbHost, dbPort, dbUser, dbPass, dbName)
 }
 
 func main() {
-	book1 := &response.BookResponse{
-		ID:          1,
-		Title:       "Book 1",
-		Quantity:    4,
-		Description: "Lala",
-		Cover:       "Sampul",
-	}
-	book2 := &response.BookResponse{
-		ID:          2,
-		Title:       "Book 2",
-		Quantity:    8,
-		Description: "Lala",
-		Cover:       "Sampul",
+	if err := godotenv.Load(); err != nil {
+		log.Println("no env got")
 	}
 
-	books := []response.BookResponse{
-		*book1,
-		*book2,
-	}
+	config := InitConfig()
 
-	jsonRes := encode(books)
-
-	fmt.Println(jsonRes)
-
-	bookProto1 := &proto.BookResponse{
-		Id:          1,
-		Title:       "Book 1",
-		Description: "Lala",
-		Quantity:    4,
-		Cover:       "Sampul",
-		Author:      nil,
-	}
-
-	bookProto2 := &proto.BookResponse{
-		Id:          2,
-		Title:       "Book 2",
-		Description: "Lala",
-		Quantity:    8,
-		Cover:       "Sampul",
-		Author:      nil,
-	}
-
-	booksProto := &proto.BookResponses{
-		Books: []*proto.BookResponse{
-			bookProto1, bookProto2,
-		},
-	}
-
-	data, err := pro.Marshal(booksProto)
+	listener, err := net.Listen("tcp", ":50053")
 	if err != nil {
-		panic(err)
+		log.Println("err : ", err)
+		return
 	}
 
-	fmt.Println(data)
+	opt := []grpc.ServerOption{
+		grpc.ChainUnaryInterceptor(),
+	}
 
-	err = ioutil.WriteFile("response.json", []byte(jsonRes), 0644)
+	server := grpc.NewServer(opt...)
+
+	repository, err := configs.NewRepository(config)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
 
-	err = ioutil.WriteFile("response-proto", data, 0644)
-	if err != nil {
-		panic(err)
+	authUsecase := usecase.NewAuthUseCase(repository.AuthRepository)
+	auth := handler_grpc.NewAuthHandler(authUsecase)
+
+	pb.RegisterAuthServiceServer(server, auth)
+
+	if err = server.Serve(listener); err != nil {
+		log.Fatal("err : ", err)
 	}
+	log.Println("server running at :50053")
+
 }

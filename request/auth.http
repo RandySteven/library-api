@@ -1,0 +1,8 @@
+proto < ./../proto/library_api.proto
+@host=http://localhost:50053
+
+GRPC /AuthService/Login
+{
+    "email": "randysteven12@gmail.com",
+    "password": "test_1234"
+}
