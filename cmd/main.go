@@ -12,7 +12,7 @@ import (
 	handler_grpc "git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/handler/grpc"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/pb"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/usecase"
-	"github.com/golang-jwt/jwt/v5"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/utils"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -27,26 +27,6 @@ func InitConfig() *models.Config {
 	return models.NewConfig(dbHost, dbPort, dbUser, dbPass, dbName)
 }
 
-func valid(tokenString string) *configs.JWTClaim {
-
-	if tokenString == "" {
-		return nil
-	}
-
-	claims := &configs.JWTClaim{}
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
-		return configs.JWT_KEY, nil
-	})
-
-	if err != nil || !token.Valid {
-		log.Println("err token : ", err)
-		log.Println("token valid : ", token.Valid)
-		return nil
-	}
-
-	return claims
-}
-
 func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 
@@ -59,7 +39,7 @@ func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, h
 	}
 
 	tokenHeader := md["authorization"][0]
-	token := valid(tokenHeader)
+	token := utils.ValidateToken(tokenHeader)
 	if token == nil {
 		return nil, errors.New("error get token")
 	}

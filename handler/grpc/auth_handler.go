@@ -24,7 +24,6 @@ func NewAuthHandler(uscase interfaces.AuthUseCase) *AuthHandler {
 
 func (h *AuthHandler) Login(ctx context.Context, req *pb.AuthRequest) (*pb.AuthResponse, error) {
 
-	log.Println("test hit")
 	user := &request.UserLoginRequest{
 		Email:    strings.TrimSpace(req.Email),
 		Password: strings.TrimSpace(req.Password),
