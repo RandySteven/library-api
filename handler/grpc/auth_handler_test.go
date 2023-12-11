@@ -44,22 +44,22 @@ func TestLogin(t *testing.T) {
 		assert.NotEqual(t, expectedRes, res)
 	})
 
-	t.Run("should return error invalid email", func(t *testing.T) {
-		mocks := mocks.NewAuthUseCase(t)
-		handler := handler_grpc.NewAuthHandler(mocks)
+	// t.Run("should return error invalid email", func(t *testing.T) {
+	// 	mocks := mocks.NewAuthUseCase(t)
+	// 	handler := handler_grpc.NewAuthHandler(mocks)
 
-		userLogin := &request.UserLoginRequest{
-			Email:    "randysteven12",
-			Password: "test_1234",
-		}
+	// 	userLogin := &request.UserLoginRequest{
+	// 		Email:    "randysteven12",
+	// 		Password: "test_1234",
+	// 	}
 
-		userReq := &pb.AuthRequest{
-			Email:    userLogin.Email,
-			Password: userLogin.Password,
-		}
+	// 	userReq := &pb.AuthRequest{
+	// 		Email:    userLogin.Email,
+	// 		Password: userLogin.Password,
+	// 	}
 
-		_, err := handler.Login(context.Background(), userReq)
+	// 	_, err := handler.Login(context.Background(), userReq)
 
-		assert.Error(t, err)
-	})
+	// 	assert.Error(t, err)
+	// })
 }

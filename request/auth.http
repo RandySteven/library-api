@@ -1,5 +1,5 @@
-# proto < ./../proto/library_api.proto
-# @host=http://localhost:50053
+proto < ./../proto/library_api.proto
+@host=http://localhost:50053
 
 # GRPC /AuthService/Login
 # {
