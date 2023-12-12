@@ -5,7 +5,7 @@ package library;
 option go_package = "./pb";
 
 message BorrowRequest {
-    uint32 book_id = 1;
+    uint32 book_id = 2;
 }
 
 message AuthRequest {
@@ -19,6 +19,10 @@ message BookRequest {
     uint32 quantity = 3;
     string cover = 4;
     uint32 author_id = 5;
+}
+
+message ReturnRequest {
+    uint32 borrow_id = 1;
 }
 
 message UserRegisterRequest {
@@ -95,6 +99,7 @@ message Empty{}
 
 service BorrowBookService {
     rpc CreateBorrowBook(BorrowRequest) returns (BorrowBookResponse);
+    rpc RetrunBook(ReturnRequest) returns (BorrowBookResponse);
 }
 
 service AuthService {

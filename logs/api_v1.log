@@ -40,3 +40,11 @@
 {"level":"info","msg":"map[latency:392ns path:/library.AuthService/Login req:{\"email\":\"randysteven12@gmail.com\",\"password\":\"test_1234\"} status:OK]","time":"2023-12-12T12:17:12+07:00"}
 {"level":"error","msg":"map[err:rpc error: code = Unknown desc = ERROR: insert or update on table \"books\" violates foreign key constraint \"fk_books_author\" (SQLSTATE 23503) latency:2.666µs path:/library.BookService/CreateBook status:Unknown]","time":"2023-12-12T12:19:27+07:00"}
 {"level":"info","msg":"map[latency:2.126µs path:/library.BookService/CreateBook req:{\"title\":\"Buku GRPC\",\"description\":\"Buku terbuat dari gRPC\",\"quantity\":12,\"cover\":\"Sampul\",\"author_id\":1} status:OK]","time":"2023-12-12T12:20:03+07:00"}
+{"level":"error","msg":"map[err:rpc error: code = Unknown desc = rpc error: code = Unauthenticated desc = invalid token latency:904ns path:/library.BorrowBookService/CreateBorrowBook status:Unknown]","time":"2023-12-12T14:00:06+07:00"}
+{"level":"info","msg":"map[latency:704ns path:/library.AuthService/Login req:{\"email\":\"randysteven12@gmail.com\",\"password\":\"test_1234\"} status:OK]","time":"2023-12-12T14:00:19+07:00"}
+{"level":"info","msg":"map[latency:535ns path:/library.BorrowBookService/CreateBorrowBook req:{\"user_id\":1,\"book_id\":2} status:OK]","time":"2023-12-12T14:00:54+07:00"}
+{"level":"info","msg":"map[latency:986ns path:/library.BorrowBookService/CreateBorrowBook req:{\"user_id\":1,\"book_id\":3} status:OK]","time":"2023-12-12T14:04:10+07:00"}
+{"level":"error","msg":"map[err:rpc error: code = Unknown desc = rpc error: code = Unauthenticated desc = invalid token latency:2.11µs path:/library.BorrowBookService/RetrunBook status:Unknown]","time":"2023-12-12T14:07:38+07:00"}
+{"level":"error","msg":"map[err:rpc error: code = InvalidArgument desc = book id not found latency:2.38µs path:/library.BorrowBookService/CreateBorrowBook status:InvalidArgument]","time":"2023-12-12T14:08:18+07:00"}
+{"level":"info","msg":"map[latency:913ns path:/library.BorrowBookService/CreateBorrowBook req:{\"book_id\":4} status:OK]","time":"2023-12-12T14:08:23+07:00"}
+{"level":"error","msg":"map[err:rpc error: code = InvalidArgument desc = book already returned latency:1.68µs path:/library.BorrowBookService/RetrunBook status:InvalidArgument]","time":"2023-12-12T14:09:01+07:00"}

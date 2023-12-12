@@ -52,13 +52,16 @@ func main() {
 	authUsecase := usecase.NewAuthUseCase(repository.AuthRepository)
 	userUsecase := usecase.NewUserUseCase(repository.UserRepository)
 	bookUsecase := usecase.NewBookUseCase(repository.BookRepository, repository.AuthorRepository)
+	borrowUsecase := usecase.NewBorrowUseCase(repository.BorrowRepository)
 	auth := handler_grpc.NewAuthHandler(authUsecase)
 	user := handler_grpc.NewUserHandler(userUsecase)
 	book := handler_grpc.NewBookHandler(bookUsecase)
+	borrow := handler_grpc.NewBorrowHandler(borrowUsecase)
 
 	pb.RegisterAuthServiceServer(server, auth)
 	pb.RegisterUserServiceServer(server, user)
 	pb.RegisterBookServiceServer(server, book)
+	pb.RegisterBorrowBookServiceServer(server, borrow)
 
 	if err = server.Serve(listener); err != nil {
 		log.Fatal("err : ", err)

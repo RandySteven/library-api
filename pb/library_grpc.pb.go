@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BorrowBookServiceClient interface {
 	CreateBorrowBook(ctx context.Context, in *BorrowRequest, opts ...grpc.CallOption) (*BorrowBookResponse, error)
+	RetrunBook(ctx context.Context, in *ReturnRequest, opts ...grpc.CallOption) (*BorrowBookResponse, error)
 }
 
 type borrowBookServiceClient struct {
@@ -42,11 +43,21 @@ func (c *borrowBookServiceClient) CreateBorrowBook(ctx context.Context, in *Borr
 	return out, nil
 }
 
+func (c *borrowBookServiceClient) RetrunBook(ctx context.Context, in *ReturnRequest, opts ...grpc.CallOption) (*BorrowBookResponse, error) {
+	out := new(BorrowBookResponse)
+	err := c.cc.Invoke(ctx, "/library.BorrowBookService/RetrunBook", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BorrowBookServiceServer is the server API for BorrowBookService service.
 // All implementations must embed UnimplementedBorrowBookServiceServer
 // for forward compatibility
 type BorrowBookServiceServer interface {
 	CreateBorrowBook(context.Context, *BorrowRequest) (*BorrowBookResponse, error)
+	RetrunBook(context.Context, *ReturnRequest) (*BorrowBookResponse, error)
 	mustEmbedUnimplementedBorrowBookServiceServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedBorrowBookServiceServer struct {
 
 func (UnimplementedBorrowBookServiceServer) CreateBorrowBook(context.Context, *BorrowRequest) (*BorrowBookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBorrowBook not implemented")
+}
+func (UnimplementedBorrowBookServiceServer) RetrunBook(context.Context, *ReturnRequest) (*BorrowBookResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RetrunBook not implemented")
 }
 func (UnimplementedBorrowBookServiceServer) mustEmbedUnimplementedBorrowBookServiceServer() {}
 
@@ -88,6 +102,24 @@ func _BorrowBookService_CreateBorrowBook_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BorrowBookService_RetrunBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReturnRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BorrowBookServiceServer).RetrunBook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/library.BorrowBookService/RetrunBook",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BorrowBookServiceServer).RetrunBook(ctx, req.(*ReturnRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BorrowBookService_ServiceDesc is the grpc.ServiceDesc for BorrowBookService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var BorrowBookService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateBorrowBook",
 			Handler:    _BorrowBookService_CreateBorrowBook_Handler,
+		},
+		{
+			MethodName: "RetrunBook",
+			Handler:    _BorrowBookService_RetrunBook_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
