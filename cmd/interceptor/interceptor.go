@@ -75,7 +75,7 @@ func ErrorInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, 
 		case errors.As(err, &errBorrowRecordNotFound):
 			return res, status.Error(codes.InvalidArgument, err.Error())
 		case errors.As(err, &errPermissionDenied):
-			return res, status.Error(codes.InvalidArgument, err.Error())
+			return res, status.Error(codes.PermissionDenied, err.Error())
 		default:
 			return res, status.Error(codes.Unknown, err.Error())
 		}
@@ -93,9 +93,16 @@ func LogInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, ha
 	args := map[string]interface{}{
 		"status":  status.Code(err),
 		"latency": time.Since(start),
+		"path":    info.FullMethod,
 	}
 
-	log.WithFields(args).Info(utils.Encode(req))
+	if err != nil {
+		args["err"] = err.Error()
+		log.Error(args)
+	} else {
+		args["req"] = utils.Encode(req)
+		log.Info(args)
+	}
 
 	return res, err
 }

@@ -35,3 +35,8 @@
 {"level":"info","msg":"print","time":"2023-12-12T10:30:35+07:00"}
 {"level":"info","msg":"print","time":"2023-12-12T10:30:54+07:00"}
 {"latency":1147,"level":"error","msg":"\u003cnil\u003e","status":0,"time":"2023-12-12T10:34:53+07:00"}
+{"err":"rpc error: code = Unknown desc = rpc error: code = Unauthenticated desc = invalid token","latency":1054,"level":"error","msg":"{}","status":2,"time":"2023-12-12T11:08:34+07:00"}
+{"err":null,"latency":688,"level":"error","msg":"{}","status":0,"time":"2023-12-12T11:08:37+07:00"}
+{"level":"info","msg":"map[latency:392ns path:/library.AuthService/Login req:{\"email\":\"randysteven12@gmail.com\",\"password\":\"test_1234\"} status:OK]","time":"2023-12-12T12:17:12+07:00"}
+{"level":"error","msg":"map[err:rpc error: code = Unknown desc = ERROR: insert or update on table \"books\" violates foreign key constraint \"fk_books_author\" (SQLSTATE 23503) latency:2.666µs path:/library.BookService/CreateBook status:Unknown]","time":"2023-12-12T12:19:27+07:00"}
+{"level":"info","msg":"map[latency:2.126µs path:/library.BookService/CreateBook req:{\"title\":\"Buku GRPC\",\"description\":\"Buku terbuat dari gRPC\",\"quantity\":12,\"cover\":\"Sampul\",\"author_id\":1} status:OK]","time":"2023-12-12T12:20:03+07:00"}

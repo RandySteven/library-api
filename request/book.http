@@ -1,6 +1,23 @@
 proto < ./../proto/library.proto
 @host=http://localhost:50053
 
+####
 GRPC /library.BookService/GetAllBooks
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIzNTI3MzV9.HWhr6x9HHA9nf_q7-PZGTaWatCtiuJe-g-qSym-a_n4    
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIzNTQzOTB9.eRo1rfYzT1_XgrL1aTF9AwlNS2AeuhhuZJnCwPQW3kc
 {}
+
+####
+GRPC /library.BookService/GetAllBooks
+authorization: 
+{}
+
+####
+GRPC /library.BookService/CreateBook
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIzNTkxMzJ9.yefRApFLSJIbc5_rFajn7IeEUDGV70FtIwWEf4l2lJQ
+{
+    "title": "Buku GRPC",
+    "description": "Buku terbuat dari gRPC",
+    "quantity": 12,
+    "cover": "Sampul",
+    "authorId": 1
+}

@@ -195,6 +195,7 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BookServiceClient interface {
 	GetAllBooks(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetBookResponses, error)
+	CreateBook(ctx context.Context, in *BookRequest, opts ...grpc.CallOption) (*BookResponse, error)
 }
 
 type bookServiceClient struct {
@@ -214,11 +215,21 @@ func (c *bookServiceClient) GetAllBooks(ctx context.Context, in *Empty, opts ...
 	return out, nil
 }
 
+func (c *bookServiceClient) CreateBook(ctx context.Context, in *BookRequest, opts ...grpc.CallOption) (*BookResponse, error) {
+	out := new(BookResponse)
+	err := c.cc.Invoke(ctx, "/library.BookService/CreateBook", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BookServiceServer is the server API for BookService service.
 // All implementations must embed UnimplementedBookServiceServer
 // for forward compatibility
 type BookServiceServer interface {
 	GetAllBooks(context.Context, *Empty) (*GetBookResponses, error)
+	CreateBook(context.Context, *BookRequest) (*BookResponse, error)
 	mustEmbedUnimplementedBookServiceServer()
 }
 
@@ -228,6 +239,9 @@ type UnimplementedBookServiceServer struct {
 
 func (UnimplementedBookServiceServer) GetAllBooks(context.Context, *Empty) (*GetBookResponses, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllBooks not implemented")
+}
+func (UnimplementedBookServiceServer) CreateBook(context.Context, *BookRequest) (*BookResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateBook not implemented")
 }
 func (UnimplementedBookServiceServer) mustEmbedUnimplementedBookServiceServer() {}
 
@@ -260,6 +274,24 @@ func _BookService_GetAllBooks_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookService_CreateBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookServiceServer).CreateBook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/library.BookService/CreateBook",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookServiceServer).CreateBook(ctx, req.(*BookRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BookService_ServiceDesc is the grpc.ServiceDesc for BookService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -270,6 +302,10 @@ var BookService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllBooks",
 			Handler:    _BookService_GetAllBooks_Handler,
+		},
+		{
+			MethodName: "CreateBook",
+			Handler:    _BookService_CreateBook_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

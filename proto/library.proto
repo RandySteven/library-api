@@ -13,6 +13,14 @@ message AuthRequest {
     string password = 2;
 }
 
+message BookRequest {
+    string title = 1;
+    string description = 2;
+    uint32 quantity = 3;
+    string cover = 4;
+    uint32 author_id = 5;
+}
+
 message UserRegisterRequest {
     string name = 1;
     string email = 2;
@@ -95,6 +103,7 @@ service AuthService {
 
 service BookService {
     rpc GetAllBooks(Empty) returns (GetBookResponses);
+    rpc CreateBook(BookRequest) returns (BookResponse);
 }
 
 service UserService{

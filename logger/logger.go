@@ -25,11 +25,13 @@ func init() {
 }
 
 func NewLog() Logger {
-	lw := logrus.New()
-	lw.SetFormatter(&logrus.JSONFormatter{})
-	lw.SetOutput(os.Stdout)
-	Log = &loggerWrapper{
-		lw: lw,
+	if Log == nil {
+		lw := logrus.New()
+		lw.SetFormatter(&logrus.JSONFormatter{})
+		lw.SetOutput(os.Stdout)
+		Log = &loggerWrapper{
+			lw: lw,
+		}
 	}
 	return Log
 }
