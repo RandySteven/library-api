@@ -13,11 +13,11 @@ authorization:
 
 ####
 GRPC /library.BookService/CreateBook
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIzNTkxMzJ9.yefRApFLSJIbc5_rFajn7IeEUDGV70FtIwWEf4l2lJQ
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIzNjczODd9.f8DBRrrb2LMD2Dq-wqRAFOAmq0_wfVJL3GyNqfxyBiE
 {
-    "title": "Buku GRPC",
-    "description": "Buku terbuat dari gRPC",
-    "quantity": 12,
+    "title": "",
+    "description": "Buku terkuat di dunia dari gRPC",
+    "quantity": 0,
     "cover": "Sampul",
     "authorId": 1
 }

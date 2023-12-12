@@ -3,9 +3,11 @@ package handler_grpc
 import (
 	"context"
 
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/pb"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/utils"
 )
 
 type BookHandler struct {
@@ -59,12 +61,17 @@ func (h *BookHandler) GetAllBooks(ctx context.Context, empty *pb.Empty) (*pb.Get
 }
 
 func (h *BookHandler) CreateBook(ctx context.Context, req *pb.BookRequest) (*pb.BookResponse, error) {
+
 	book := &models.Book{
 		Title:       req.Title,
 		Quantity:    uint(req.Quantity),
 		Description: req.Description,
 		Cover:       req.Cover,
 		AuthorID:    uint(req.AuthorId),
+	}
+
+	if errs := utils.Validate(book); errs != nil {
+		return nil, apperror.NewErrBadRequest(errs[0])
 	}
 
 	book, err := h.usecase.CreateBook(ctx, book)
@@ -79,7 +86,7 @@ func (h *BookHandler) CreateBook(ctx context.Context, req *pb.BookRequest) (*pb.
 		Quantity:    uint32(book.Quantity),
 		Cover:       book.Cover,
 		Author:      nil,
-		CreatedAt:   book.CreatedAt.GoString(),
-		UpdatedAt:   book.UpdatedAt.GoString(),
+		CreatedAt:   book.CreatedAt.Format("2006/01/02"),
+		UpdatedAt:   book.UpdatedAt.Format("2006/01/02"),
 	}, nil
 }

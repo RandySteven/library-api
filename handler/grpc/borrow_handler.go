@@ -52,10 +52,9 @@ func (h *BorrowHandler) RetrunBook(ctx context.Context, req *pb.ReturnRequest) (
 	return &pb.BorrowBookResponse{
 		Message: "Return successs",
 		BorrowResponse: &pb.BorrowResponse{
-			Id:           uint32(borrow.ID),
-			BookId:       uint32(borrow.BookID),
-			UserId:       uint32(borrow.UserID),
-			BookQuantity: uint32(borrow.Book.Quantity),
+			Id:     uint32(borrow.ID),
+			BookId: uint32(borrow.BookID),
+			UserId: uint32(borrow.UserID),
 		},
 	}, nil
 }
