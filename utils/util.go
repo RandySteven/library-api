@@ -70,3 +70,11 @@ func ValidateToken(tokenString string) *configs.JWTClaim {
 
 	return claims
 }
+
+func Encode(data interface{}) string {
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return err.Error()
+	}
+	return string(jsonData)
+}

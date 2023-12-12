@@ -38,7 +38,7 @@ func main() {
 	}
 
 	opt := []grpc.ServerOption{
-		grpc.ChainUnaryInterceptor(interceptor.AuthInterceptor, interceptor.ErrorInterceptor),
+		grpc.ChainUnaryInterceptor(interceptor.AuthInterceptor, interceptor.LogInterceptor, interceptor.ErrorInterceptor),
 	}
 
 	server := grpc.NewServer(opt...)

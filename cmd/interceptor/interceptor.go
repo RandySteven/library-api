@@ -3,10 +3,11 @@ package interceptor
 import (
 	"context"
 	"errors"
+	"time"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/apperror"
+	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/logger"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/utils"
-	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -21,13 +22,13 @@ func AuthInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, h
 	}
 
 	if !ok {
-		return nil, errors.New("missing token")
+		return nil, status.Error(codes.Unauthenticated, "unauthroized")
 	}
 
 	tokenHeader := md["authorization"][0]
 	token := utils.ValidateToken(tokenHeader)
 	if token == nil {
-		return nil, errors.New("error get token")
+		return nil, status.Error(codes.Unauthenticated, "invalid token")
 	}
 
 	ctx = context.WithValue(ctx, "id", token.ID)
@@ -84,11 +85,17 @@ func ErrorInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, 
 }
 
 func LogInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-	var log = logrus.New()
-
 	res, err := handler(ctx, req)
 
-	log.Info("Print")
+	log := logger.NewLog()
+
+	start := time.Now()
+	args := map[string]interface{}{
+		"status":  status.Code(err),
+		"latency": time.Since(start),
+	}
+
+	log.WithFields(args).Info(utils.Encode(req))
 
 	return res, err
 }
