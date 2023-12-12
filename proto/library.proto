@@ -5,7 +5,7 @@ package library;
 option go_package = "./pb";
 
 message BorrowRequest {
-    uint32 book_id = 2;
+    uint32 book_id = 1;
 }
 
 message AuthRequest {

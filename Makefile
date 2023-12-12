@@ -27,3 +27,6 @@ result:
 
 exec_grpc_server:
 	go run ./cmd/main.go
+
+exec_grpc_client:
+	go run ./cmd/clients/main.go

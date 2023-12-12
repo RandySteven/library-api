@@ -14,6 +14,11 @@ type BorrowHandler struct {
 	usecase interfaces.BorrowUseCase
 }
 
+type BorrowGrpcHandler struct {
+	pb.UnimplementedBorrowBookServiceServer
+	usecase interfaces.BorrowGrpcUsecase
+}
+
 func (h *BorrowHandler) CreateBorrowBook(ctx context.Context, req *pb.BorrowRequest) (*pb.BorrowBookResponse, error) {
 
 	userId := ctx.Value("id").(uint)
@@ -59,6 +64,19 @@ func (h *BorrowHandler) RetrunBook(ctx context.Context, req *pb.ReturnRequest) (
 	}, nil
 }
 
+func (h *BorrowGrpcHandler) CreateBorrowBook(ctx context.Context, req *pb.BorrowRequest) (*pb.BorrowBookResponse, error) {
+	borrow, err := h.usecase.CreateBorrowRecord(ctx, req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return borrow, nil
+}
 func NewBorrowHandler(usecase interfaces.BorrowUseCase) *BorrowHandler {
 	return &BorrowHandler{usecase: usecase}
+}
+
+func NewBorrowGrpcHandler(usecase interfaces.BorrowGrpcUsecase) *BorrowGrpcHandler {
+	return &BorrowGrpcHandler{usecase: usecase}
 }

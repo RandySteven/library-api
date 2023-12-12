@@ -1,15 +1,19 @@
 proto < ./../proto/library.proto
 @host=http://localhost:50053
 
+{{
+    exports.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIzNzI5ODd9.dgDhP4U8mekheakHrpDOACOw0nuzC1SZV_qetQk_gak"
+}}
+
 ####
 GRPC /library.BorrowBookService/CreateBorrowBook
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIzNjUzMTl9.JjfdvTWfyiSQ2vnxWv1S323p1v1b6sn3aKC0vJAJ5Wc
+authorization: {{token}}
 {
-    "bookId": 1
+    "bookId": 2
 }
 ####
 GRPC /library.BorrowBookService/RetrunBook
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIzNjUzMTl9.JjfdvTWfyiSQ2vnxWv1S323p1v1b6sn3aKC0vJAJ5Wc
+authorization: {{token}}
 {
-    "borrowId": 21
+    "borrowId": 22
 }

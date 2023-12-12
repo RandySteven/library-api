@@ -1,6 +1,11 @@
 proto < ./../proto/library.proto
 @host=http://localhost:50053
 @token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIyODIyMDF9.jlQIg1No2DTKTN-ARUFpq9pwvvcLlA_j8phin6X3F5s
+
+{{
+    exports.token = "";
+}}
+
 ### Success
 GRPC /AuthService/Login
 {

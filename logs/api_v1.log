@@ -67,3 +67,17 @@
 {"level":"error","msg":"map[err:rpc error: code = Unknown desc = rpc error: code = Unauthenticated desc = invalid token latency:913ns path:/library.BookService/CreateBook status:Unknown]","time":"2023-12-12T14:34:41+07:00"}
 {"level":"info","msg":"map[latency:339ns path:/library.AuthService/Login req:{\"email\":\"randysteven12@gmail.com\",\"password\":\"test_1234\"} status:OK]","time":"2023-12-12T14:34:47+07:00"}
 {"level":"error","msg":"map[err:rpc error: code = InvalidArgument desc = Title field is required latency:839ns path:/library.BookService/CreateBook status:InvalidArgument]","time":"2023-12-12T14:35:03+07:00"}
+{"level":"info","msg":"map[latency:372ns path:/library.AuthService/Login req:{\"email\":\"randysteven12@gmail.com\",\"password\":\"test_1234\"} status:OK]","time":"2023-12-12T14:41:13+07:00"}
+{"level":"info","msg":"map[latency:627ns path:/library.BookService/GetAllBooks req:{} status:OK]","time":"2023-12-12T14:41:26+07:00"}
+{"level":"info","msg":"map[latency:357ns path:/library.AuthService/Login req:{\"email\":\"randysteven12@gmail.com\",\"password\":\"test_1234\"} status:OK]","time":"2023-12-12T16:08:07+07:00"}
+{"level":"info","msg":"map[latency:447ns path:/library.BorrowBookService/CreateBorrowBook req:{\"book_id\":1} status:OK]","time":"2023-12-12T16:08:46+07:00"}
+{"level":"info","msg":"map[latency:1.774µs path:/library.BorrowBookService/CreateBorrowBook req:{\"book_id\":2} status:OK]","time":"2023-12-12T16:08:54+07:00"}
+{"level":"error","msg":"map[err:rpc error: code = InvalidArgument desc = book already returned latency:1.719µs path:/library.BorrowBookService/RetrunBook status:InvalidArgument]","time":"2023-12-12T16:09:02+07:00"}
+{"level":"info","msg":"map[latency:2.433µs path:/library.BorrowBookService/RetrunBook req:{\"borrow_id\":22} status:OK]","time":"2023-12-12T16:09:07+07:00"}
+{"level":"info","msg":"map[latency:467ns path:/library.AuthService/Login req:{\"email\":\"randysteven12@gmail.com\",\"password\":\"test_1234\"} status:OK]","time":"2023-12-12T16:11:00+07:00"}
+{"level":"info","msg":"map[latency:589ns path:/library.BorrowBookService/CreateBorrowBook req:{\"book_id\":2} status:OK]","time":"2023-12-12T16:12:40+07:00"}
+{"level":"info","msg":"map[latency:764ns path:/library.BorrowBookService/CreateBorrowBook req:{\"book_id\":2} status:OK]","time":"2023-12-12T16:13:01+07:00"}
+{"level":"info","msg":"map[latency:1.176µs path:/library.BorrowBookService/CreateBorrowBook req:{\"book_id\":3} status:OK]","time":"2023-12-12T16:13:23+07:00"}
+{"level":"error","msg":"map[err:rpc error: code = Unknown desc = rpc error: code = Unauthenticated desc = invalid token latency:1.668µs path:/library.BorrowBookService/CreateBorrowBook status:Unknown]","time":"2023-12-12T16:54:56+07:00"}
+{"level":"info","msg":"map[latency:527ns path:/library.AuthService/Login req:{\"email\":\"randysteven12@gmail.com\",\"password\":\"test_1234\"} status:OK]","time":"2023-12-12T16:55:06+07:00"}
+{"level":"info","msg":"map[latency:1.746µs path:/library.BorrowBookService/CreateBorrowBook req:{\"book_id\":3} status:OK]","time":"2023-12-12T16:55:30+07:00"}

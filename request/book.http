@@ -1,19 +1,23 @@
 proto < ./../proto/library.proto
 @host=http://localhost:50053
 
+{{
+    exports.token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIzNjc3NzN9.bSntE3Jnbto6ZuG-zloUE0Mso2-uX1QEJFq5isizoxA";
+}}
+
 ####
 GRPC /library.BookService/GetAllBooks
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIzNTQzOTB9.eRo1rfYzT1_XgrL1aTF9AwlNS2AeuhhuZJnCwPQW3kc
+authorization: {{token}}
 {}
 
 ####
 GRPC /library.BookService/GetAllBooks
-authorization: 
+authorization: {{token}}
 {}
 
 ####
 GRPC /library.BookService/CreateBook
-authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiTmFtZSI6IlJhbmR5IFN0ZXZlbiIsIkVtYWlsIjoicmFuZHlzdGV2ZW4xMkBnbWFpbC5jb20iLCJpc3MiOiJpc3N1ZXIiLCJleHAiOjE3MDIzNjczODd9.f8DBRrrb2LMD2Dq-wqRAFOAmq0_wfVJL3GyNqfxyBiE
+authorization: {{token}}
 {
     "title": "",
     "description": "Buku terkuat di dunia dari gRPC",

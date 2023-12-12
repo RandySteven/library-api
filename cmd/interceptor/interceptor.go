@@ -61,7 +61,7 @@ func ErrorInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, 
 		case errors.As(err, &errBadRequest):
 			return res, status.Error(codes.InvalidArgument, err.Error())
 		case errors.As(err, &errNoDuplication):
-			return res, status.Error(codes.InvalidArgument, err.Error())
+			return res, status.Error(codes.AlreadyExists, err.Error())
 		case errors.As(err, &errBookIdNotFound):
 			return res, status.Error(codes.InvalidArgument, err.Error())
 		case errors.As(err, &errUserIdNotFound):
