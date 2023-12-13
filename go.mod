@@ -14,7 +14,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/crypto v0.16.0
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d
-	google.golang.org/grpc v1.59.0
+	google.golang.org/grpc v1.58.0
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/gorm v1.25.5
 )

@@ -2,7 +2,6 @@ package handler_grpc
 
 import (
 	"context"
-	"log"
 
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/entity/models"
 	"git.garena.com/sea-labs-id/bootcamp/batch-02/shared-projects/library-api/interfaces"
@@ -22,7 +21,6 @@ type BorrowGrpcHandler struct {
 func (h *BorrowHandler) CreateBorrowBook(ctx context.Context, req *pb.BorrowRequest) (*pb.BorrowBookResponse, error) {
 
 	userId := ctx.Value("id").(uint)
-	log.Println(userId)
 	borrow := &models.Borrow{
 		UserID: userId,
 		BookID: uint(req.BookId),
