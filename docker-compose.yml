@@ -15,10 +15,20 @@ services:
       - .env
     networks:
       library_network:
+    depends_on:
+      db:
+        condition: service_healthy
   db:
     image: postgres:latest
-    container_name: postgre_library
+    container_name: postgre_lib
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./db/pg_data:/var/lib/postgresql/data
     env_file:
       - .env
     environment:
